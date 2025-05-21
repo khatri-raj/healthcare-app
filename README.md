@@ -87,7 +87,7 @@ Visit: http://127.0.0.1:8000
 
 📸 Screenshots
 ### 🏠 Home Page
-![Home Page](screenshots/Home_Page.png)
+![Home Page](Screenshots/Home_Page.png)
 
 ### 🔐 Login Page
 ![Login Page](screenshots/Login.png)
@@ -114,7 +114,7 @@ Visit: http://127.0.0.1:8000
 ![Paitent Home Page](screenshots/PaitentHome.png)
 
 ### 🧍 Patient Dashboard
-![Paitent Dashboard Page](screenshots/PaitentDashboard.png)
+![Paitent Dashboard Page](Screenshots/PaitentDashboard.png)
 
 ### 📖 Patient View Blog
 ![Paitnet View Blog Page](screenshots/PaitnetViewBlog.png)
@@ -124,6 +124,8 @@ Visit: http://127.0.0.1:8000
 
 ### 🛠️ Users Administration
 ![Users Administration Page](screenshots/UsersAdministration.png)
+
+
 👨‍💻 Author
 Raj Khatri– GitHub
 rajkhatri8060@gmail.com
