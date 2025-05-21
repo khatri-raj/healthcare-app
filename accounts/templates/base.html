@@ -56,7 +56,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
-                        {% if user.user_type == 'patient' %}
+                        {% if user.user_type == 'patient' %}                        
                             <a href="{% url 'patient_dashboard' %}" class="nav-link">🏠 Dashboard</a>
                             <a href="{% url 'patient_blog_list' %}" class="nav-link">📰 Read Health Blogs</a>
                         {% elif user.user_type == 'doctor' %}

@@ -4,29 +4,31 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2 class="text-center mb-4">🩺 Doctor's Health Blogs</h2>
+    <h2 class="text-center mb-4">🩺 Health Blogs by Category</h2>
 
-    {% if blogs %}
-        <div class="row">
-            {% for blog in blogs %}
-                <div class="col-md-6 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        {% if blog.image %}
-                            <img src="{{ blog.image.url }}" class="card-img-top" alt="Blog Image" style="height: 200px; object-fit: cover;">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ blog.title }}</h5>
-                            <p class="card-text text-muted"><strong>Category:</strong> {{ blog.get_category_display }}</p>
-                            <p class="card-text">{{ blog.summary|truncatechars:100 }}</p>
-                            <p class="card-text">
-                                <small class="text-muted">By Dr. {{ blog.author.first_name }} {{ blog.author.last_name }} | {{ blog.created_at|date:"M d, Y" }}</small>
-                            </p>
-                            <a href="{% url 'patient_blog_detail' blog.id %}" class="btn btn-primary btn-sm">Read More</a>
+    {% if blogs_by_category %}
+        {% for category, blogs in blogs_by_category.items %}
+            <h3 class="mb-3">{{ category }}</h3>
+            <div class="row mb-4">
+                {% for blog in blogs %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 shadow-sm">
+                            {% if blog.image %}
+                                <img src="{{ blog.image.url }}" class="card-img-top" alt="Blog Image" style="height: 200px; object-fit: cover;">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ blog.title }}</h5>
+                                <p class="card-text text-muted">{{ blog.summary|truncatewords:15 }}</p>
+                                <p class="card-text">
+                                    <small class="text-muted">By Dr. {{ blog.author.first_name }} {{ blog.author.last_name }} | {{ blog.created_at|date:"M d, Y" }}</small>
+                                </p>
+                                <a href="{% url 'patient_blog_detail' blog.id %}" class="btn btn-primary btn-sm">Read More</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
     {% else %}
         <p class="text-center text-muted">No blogs available right now.</p>
     {% endif %}

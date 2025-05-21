@@ -28,7 +28,6 @@ class BlogPost(models.Model):
         ('covid19', 'Covid19'),
         ('immunization', 'Immunization'),
     ]
-
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     image = models.ImageField(upload_to='blog_images/', blank=True, null=True)

@@ -4,7 +4,6 @@ from django.contrib import messages
 from .models import CustomUser, BlogPost
 from django import forms
 from django.contrib.auth.decorators import login_required
-
 from django.shortcuts import get_object_or_404
 
 
@@ -110,13 +109,22 @@ def doctor_blog_create(request):
         form = BlogPostForm()
     return render(request, 'doctor_blog_create.html', {'form': form})
 
+from collections import defaultdict
+
 @login_required
 def patient_blog_list(request):
     if request.user.user_type != 'patient':
         return redirect('login')
 
+    # Filter non-draft posts, order by created date desc
     blogs = BlogPost.objects.filter(is_draft=False).order_by('-created_at')
-    return render(request, 'patient_blog_list.html', {'blogs': blogs})
+
+    # Group blogs by category into a dictionary
+    blogs_by_category = defaultdict(list)
+    for blog in blogs:
+        blogs_by_category[blog.get_category_display()].append(blog)
+
+    return render(request, 'patient_blog_list.html', {'blogs_by_category': dict(blogs_by_category)})
 
 @login_required
 def patient_blog_detail(request, blog_id):
