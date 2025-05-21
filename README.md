@@ -1,4 +1,4 @@
-# healthcare-app
+# Healthcare-app
 
 A web-based healthcare management system built with **Django** and **Bootstrap 5**. It supports role-based access for Patients and Doctors with separate dashboards, profile management, and a new integrated blog system.
 
