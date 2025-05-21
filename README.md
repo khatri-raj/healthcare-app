@@ -86,23 +86,44 @@ python manage.py runserver
 Visit: http://127.0.0.1:8000
 
 📸 Screenshots
-### 🔐 Home Page
+### 🏠 Home Page
 ![Home Page](screenshots/Home_Page.png)
 
 ### 🔐 Login Page
-![Login Page](screenshots/Login_Page.png)
+![Login Page](screenshots/Login.png)
 
-### 🔐 Signup Page
-![Signup Page](screenshots/Signup_Page.png)
+### 📝 Signup Page
+![Signup Page](screenshots/Signup.png)
 
-### 🔐 Patient Dashboard
-![Patient Dashboard](screenshots/Patient_Dashboard.png)
+### 🏥 Doctor Home
+![Doctor Home Page](screenshots/DoctorHome.png)
 
-### 🔐 Doctor Dashboard
-![Doctor Dashboard](screenshots/Doctor_Dashboard.png)
+### 🧑‍⚕️ Doctor Dashboard
+![Doctor Dashboard Page](screenshots/DoctorDashboard.png)
 
-### 🔐 Django Administrasion
-![Django Administration](screenshots/Administration.png)
+### ✍️ Doctor Create Blog
+![Doctor Create Blog Page](screenshots/DoctorCreateBlog.png)
 
+### 📚 Doctor View Blog
+![Doctor View Blog Page](screenshots/DoctorViewBlog.png)
+
+### 💼 Blog Post Administration
+![Blog Post Administration Page](screenshots/BlogPostAdministration.png)
+
+### 🏠 Patient Home
+![Paitent Home Page](screenshots/PaitentHome.png)
+
+### 🧍 Patient Dashboard
+![Paitent Dashboard Page](screenshots/PaitentDashboard.png)
+
+### 📖 Patient View Blog
+![Paitnet View Blog Page](screenshots/PaitnetViewBlog.png)
+
+### 📘 Detailed Blog View
+![Detailed Blog Page](screenshots/DetailedBlog.png)
+
+### 🛠️ Users Administration
+![Users Administration Page](screenshots/UsersAdministration.png)
 👨‍💻 Author
 Raj Khatri– GitHub
+rajkhatri8060@gmail.com
