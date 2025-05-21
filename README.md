@@ -87,7 +87,7 @@ Visit: http://127.0.0.1:8000
 
 📸 Screenshots
 ### 🏠 Home Page
-![Home Page](Screenshots/Home_Page.png)
+![Home Page](Screenshots/Home.png)
 
 ### 🔐 Login Page
 ![Login Page](Screenshots/Login.png)
