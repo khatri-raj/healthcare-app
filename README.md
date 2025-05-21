@@ -90,40 +90,40 @@ Visit: http://127.0.0.1:8000
 ![Home Page](Screenshots/Home_Page.png)
 
 ### 🔐 Login Page
-![Login Page](screenshots/Login.png)
+![Login Page](Screenshots/Login.png)
 
 ### 📝 Signup Page
-![Signup Page](screenshots/Signup.png)
+![Signup Page](Screenshots/Signup.png)
 
 ### 🏥 Doctor Home
-![Doctor Home Page](screenshots/DoctorHome.png)
+![Doctor Home Page](Screenshots/DoctorHome.png)
 
 ### 🧑‍⚕️ Doctor Dashboard
-![Doctor Dashboard Page](screenshots/DoctorDashboard.png)
+![Doctor Dashboard Page](Screenshots/DoctorDashboard.png)
 
 ### ✍️ Doctor Create Blog
-![Doctor Create Blog Page](screenshots/DoctorCreateBlog.png)
+![Doctor Create Blog Page](Screenshots/DoctorCreateBlog.png)
 
 ### 📚 Doctor View Blog
-![Doctor View Blog Page](screenshots/DoctorViewBlog.png)
+![Doctor View Blog Page](Screenshots/DoctorViewBlog.png)
 
 ### 💼 Blog Post Administration
-![Blog Post Administration Page](screenshots/BlogPostAdministration.png)
+![Blog Post Administration Page](Screenshots/BlogPostAdministration.png)
 
 ### 🏠 Patient Home
-![Paitent Home Page](screenshots/PaitentHome.png)
+![Paitent Home Page](Screenshots/PaitentHome.png)
 
 ### 🧍 Patient Dashboard
 ![Paitent Dashboard Page](Screenshots/PaitentDashboard.png)
 
 ### 📖 Patient View Blog
-![Paitnet View Blog Page](screenshots/PaitnetViewBlog.png)
+![Paitnet View Blog Page](Screenshots/PaitnetViewBlog.png)
 
 ### 📘 Detailed Blog View
-![Detailed Blog Page](screenshots/DetailedBlog.png)
+![Detailed Blog Page](Screenshots/DetailedBlog.png)
 
 ### 🛠️ Users Administration
-![Users Administration Page](screenshots/UsersAdministration.png)
+![Users Administration Page](Screenshots/UsersAdministration.png)
 
 
 👨‍💻 Author
