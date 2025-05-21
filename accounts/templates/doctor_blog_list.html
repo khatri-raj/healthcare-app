@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}My Blog Posts{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Blog Posts</h2>
+        <a href="{% url 'doctor_blog_create' %}" class="btn btn-primary">Create New Post</a>
+    </div>
+
+    {% if posts %}
+        <div class="list-group">
+            {% for post in posts %}
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start mb-3 shadow-sm">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ post.title }}</h5>
+                        {% if post.is_draft %}
+                            <span class="badge bg-warning text-dark">Draft</span>
+                        {% else %}
+                            <span class="badge bg-success">Published</span>
+                        {% endif %}
+                    </div>
+                    <small class="text-muted">{{ post.category|title }} | {{ post.created_at|date:"M d, Y" }}</small>
+                    {% if post.image %}
+                        <div class="mt-2">
+                            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid rounded" style="max-height: 200px;">
+                        </div>
+                    {% endif %}
+                    <p class="mt-2">{{ post.summary|truncatewords:15 }}</p>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You have not created any blog posts yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

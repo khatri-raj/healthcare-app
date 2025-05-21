@@ -1,0 +1,87 @@
+
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Signup{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <h2 class="mb-4 text-center">Create Your Account</h2>
+            <form method="post" enctype="multipart/form-data" autocomplete="off" class="bg-white p-4 shadow-sm rounded">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="id_first_name" class="form-label">First Name</label>
+                        {{ form.first_name|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="id_last_name" class="form-label">Last Name</label>
+                        {{ form.last_name|add_class:"form-control" }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="id_profile_picture" class="form-label">Profile Picture</label>
+                    {{ form.profile_picture|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Username</label>
+                    {{ form.username|add_class:"form-control"|attr:"autocomplete:off" }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_email" class="form-label">Email</label>
+                    {{ form.email|add_class:"form-control" }}
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="id_password" class="form-label">Password</label>
+                        {{ form.password|add_class:"form-control"|attr:"autocomplete:new-password" }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="id_confirm_password" class="form-label">Confirm Password</label>
+                        {{ form.confirm_password|add_class:"form-control" }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="id_address_line1" class="form-label">Address Line 1</label>
+                    {{ form.address_line1|add_class:"form-control" }}
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="id_city" class="form-label">City</label>
+                        {{ form.city|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="id_state" class="form-label">State</label>
+                        {{ form.state|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="id_pincode" class="form-label">Pincode</label>
+                        {{ form.pincode|add_class:"form-control" }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="id_user_type" class="form-label">User Type</label>
+                    {{ form.user_type|add_class:"form-control" }}
+                </div>
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Signup</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

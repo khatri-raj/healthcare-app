@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Healthcare App{% endblock %}
+
+{% block content %}
+<div class="container-main">
+    <div class="card welcome-card mx-auto" style="max-width: 600px; border:none; border-radius:12px; box-shadow:0 6px 12px rgba(0,0,0,0.15); background-color:#fff;">
+        <div class="card-body text-center" style="padding: 2.5rem;">
+            <h2 class="card-title mb-4" style="color:#1a3c6d; font-weight:600;">Welcome to Healthcare App</h2>
+            
+            {% if user.is_authenticated %}
+                <p class="card-text mb-4" style="color:#555; font-size:1.1rem;">
+                    Hello, {{ user.first_name }}! What would you like to do today?
+                </p>
+
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    {% if user.user_type == 'patient' %}
+                        <a href="{% url 'patient_dashboard' %}" class="btn btn-primary btn-lg btn-custom" style="border-radius:8px;">
+                            🏠 Patient Dashboard
+                        </a>
+                        <a href="{% url 'patient_blog_list' %}" class="btn btn-success btn-lg btn-custom" style="border-radius:8px;">
+                            📰 Read Health Blogs
+                        </a>
+                    {% elif user.user_type == 'doctor' %}
+                        <a href="{% url 'doctor_dashboard' %}" class="btn btn-primary btn-lg btn-custom" style="border-radius:8px;">
+                            🏥 Doctor Dashboard
+                        </a>
+                        <a href="{% url 'doctor_blog_create' %}" class="btn btn-success btn-lg btn-custom" style="border-radius:8px;">
+                            ✍️ Create New Blog Post
+                        </a>
+                        <a href="{% url 'doctor_blog_list' %}" class="btn btn-outline-success btn-lg btn-custom" style="border-radius:8px;">
+                            📄 View My Blog Posts
+                        </a>
+                    {% endif %}
+                </div>
+
+            {% else %}
+                <p class="card-text mb-5" style="color:#555; font-size:1.1rem;">
+                    Find healthcare services just for you. Log in to manage your health or sign up to get started.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'login' %}" class="btn btn-primary btn-custom" style="padding:12px 24px; font-size:1.1rem; border-radius:8px;">
+                        Login
+                    </a>
+                    <a href="{% url 'signup' %}" class="btn btn-success btn-custom" style="padding:12px 24px; font-size:1.1rem; border-radius:8px;">
+                        Signup
+                    </a>
+                </div>
+            {% endif %}
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

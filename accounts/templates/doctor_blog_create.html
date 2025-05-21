@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Blog Post{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Create New Blog Post</h2>
+    <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <div class="text-danger">{{ form.title.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.image.id_for_label }}" class="form-label">Image</label>
+            {{ form.image }}
+            {% if form.image.errors %}
+                <div class="text-danger">{{ form.image.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+            {{ form.category }}
+            {% if form.category.errors %}
+                <div class="text-danger">{{ form.category.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.summary.id_for_label }}" class="form-label">Summary</label>
+            {{ form.summary }}
+            {% if form.summary.errors %}
+                <div class="text-danger">{{ form.summary.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.content.id_for_label }}" class="form-label">Content</label>
+            {{ form.content }}
+            {% if form.content.errors %}
+                <div class="text-danger">{{ form.content.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-check mb-3">
+            {{ form.is_draft }}
+            <label for="{{ form.is_draft.id_for_label }}" class="form-check-label">Save as Draft</label>
+            {% if form.is_draft.errors %}
+                <div class="text-danger">{{ form.is_draft.errors }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-success">Submit</button>
+        <a href="{% url 'doctor_blog_list' %}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>
+{% endblock %}
