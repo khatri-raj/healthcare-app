@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, BlogPost
+from .models import CustomUser, BlogPost, Appointment
 
 
 class CustomUserAdmin(UserAdmin):
@@ -31,3 +31,9 @@ class BlogPostAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
 
 admin.site.register(BlogPost, BlogPostAdmin)
+
+@admin.register(Appointment)
+class AppointmentAdmin(admin.ModelAdmin):
+    list_display = ('doctor', 'patient', 'speciality', 'date', 'start_time', 'end_time', 'created_at')
+    list_filter = ('date', 'doctor', 'speciality')
+    search_fields = ('doctor__username', 'patient__username', 'speciality')

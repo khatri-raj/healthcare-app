@@ -1,11 +1,16 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import CustomUser, BlogPost
+from .models import CustomUser, BlogPost, Appointment
 from django import forms
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
-
+from datetime import datetime, time, timedelta
+from django.utils import timezone
+from django.conf import settings
+from google.oauth2 import service_account  # Add this import
+from googleapiclient.discovery import build
+from collections import defaultdict
+import os
 
 def home(request):
     return render(request, 'home.html')
@@ -59,16 +64,23 @@ def user_login(request):
             messages.error(request, 'Invalid username or password.')
     return render(request, 'login.html')
 
+@login_required
 def patient_dashboard(request):
     if not request.user.is_authenticated or request.user.user_type != 'patient':
         return redirect('login')
     return render(request, 'patient_dashboard.html', {'user': request.user})
 
+@login_required
 def doctor_dashboard(request):
     if not request.user.is_authenticated or request.user.user_type != 'doctor':
         return redirect('login')
-    return render(request, 'doctor_dashboard.html', {'user': request.user})
+    appointments = Appointment.objects.filter(doctor=request.user).order_by('date', 'start_time')
+    return render(request, 'doctor_dashboard.html', {
+        ' airs': request.user,
+        'appointments': appointments
+    })
 
+@login_required
 def user_logout(request):
     logout(request)
     return redirect('login')
@@ -115,11 +127,9 @@ from collections import defaultdict
 def patient_blog_list(request):
     if request.user.user_type != 'patient':
         return redirect('login')
-
-    # Filter non-draft posts, order by created date desc
+    
     blogs = BlogPost.objects.filter(is_draft=False).order_by('-created_at')
-
-    # Group blogs by category into a dictionary
+    
     blogs_by_category = defaultdict(list)
     for blog in blogs:
         blogs_by_category[blog.get_category_display()].append(blog)
@@ -130,3 +140,89 @@ def patient_blog_list(request):
 def patient_blog_detail(request, blog_id):
     blog = get_object_or_404(BlogPost, id=blog_id, is_draft=False)
     return render(request, 'patient_blog_detail.html', {'blog': blog})
+
+# Form for booking appointment
+class AppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ['speciality', 'date', 'start_time']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'start_time': forms.TimeInput(attrs={'type': 'time'}),
+        }
+
+@login_required
+def doctor_list(request):
+    if request.user.user_type != 'patient':
+        return redirect('login')
+    doctors = CustomUser.objects.filter(user_type='doctor')
+    return render(request, 'doctor_list.html', {'doctors': doctors})
+
+@login_required
+def book_appointment(request, doctor_id):
+    if request.user.user_type != 'patient':
+        return redirect('login')
+    doctor = get_object_or_404(CustomUser, id=doctor_id, user_type='doctor')
+
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.patient = request.user
+            appointment.doctor = doctor
+            appointment.save()
+            try:
+                if not os.path.exists(settings.GOOGLE_CALENDAR_CREDENTIALS_PATH):
+                    raise FileNotFoundError(f"Credentials file not found at {settings.GOOGLE_CALENDAR_CREDENTIALS_PATH}")
+                create_google_calendar_event(appointment)
+                messages.success(request, "Appointment booked and synced with Google Calendar.")
+            except Exception as e:
+                messages.error(request, f"Appointment saved but failed to sync with Google Calendar: {str(e)}")
+            return redirect('appointment_confirmed', appointment_id=appointment.id)
+    else:
+        form = AppointmentForm()
+    return render(request, 'book_appointment.html', {'form': form, 'doctor': doctor})
+
+
+@login_required
+def appointment_confirmed(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id, patient=request.user)
+    return render(request, 'appointment_confirmed.html', {'appointment': appointment})
+
+from googleapiclient.errors import HttpError
+
+def create_google_calendar_event(appointment):
+    try:
+        credentials = service_account.Credentials.from_service_account_file(
+            settings.GOOGLE_CALENDAR_CREDENTIALS_PATH,
+            scopes=['https://www.googleapis.com/auth/calendar']
+        )
+        service = build('calendar', 'v3', credentials=credentials)
+
+        start_datetime = datetime.combine(appointment.date, appointment.start_time)
+        end_datetime = datetime.combine(appointment.date, appointment.end_time)
+
+        event = {
+            'summary': f'Appointment with {appointment.patient.first_name} {appointment.patient.last_name}',
+            'description': f'Medical appointment for {appointment.speciality}',
+            'start': {
+                'dateTime': start_datetime.isoformat(),
+                'timeZone': 'Asia/Kolkata',
+            },
+            'end': {
+                'dateTime': end_datetime.isoformat(),
+                'timeZone': 'Asia/Kolkata',
+            }
+        }
+
+        # Use primary calendar of the service account
+        calendar_id = 'primary'
+        try:
+            service.events().insert(calendarId=calendar_id, body=event).execute()
+            return True
+        except HttpError as e:
+            raise Exception(f"Failed to create calendar event: {e}")
+    except FileNotFoundError:
+        raise Exception(f"Credentials file not found at {settings.GOOGLE_CALENDAR_CREDENTIALS_PATH}")
+    except Exception as e:
+        raise Exception(f"Error creating Google Calendar event: {e}")

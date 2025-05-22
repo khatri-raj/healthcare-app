@@ -26,6 +26,38 @@
                     </ul>
                 </div>
             </div>
+            <!-- Appointments Section -->
+  <h3 class="mb-3">Your Appointments</h3>
+  {% if appointments %}
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>Speciality</th>
+              <th>Date</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for appointment in appointments %}
+              <tr>
+                <td>{{ appointment.patient.first_name }} {{ appointment.patient.last_name }}</td>
+                <td>{{ appointment.speciality }}</td>
+                <td>{{ appointment.date }}</td>
+                <td>{{ appointment.start_time }}</td>
+                <td>{{ appointment.end_time }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <p class="text-muted">No appointments scheduled.</p>
+  {% endif %}
         </div>
     </div>
 </div>
