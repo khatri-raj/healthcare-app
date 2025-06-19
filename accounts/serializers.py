@@ -15,13 +15,26 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return None
 
 class BlogPostSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
+    image = serializers.ImageField(required=False, allow_null=True)
     author = CustomUserSerializer(read_only=True)
-    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    created_at = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M:%S")  # Mark as read_only
 
     class Meta:
         model = BlogPost
         fields = ['id', 'title', 'image', 'category', 'summary', 'content', 'is_draft', 'author', 'created_at']
+        extra_kwargs = {
+            'image': {'required': False},
+            'is_draft': {'required': True}
+        }
+
+    def validate(self, data):
+        if not data.get('title'):
+            raise serializers.ValidationError({'title': 'Title is required.'})
+        if not data.get('summary'):
+            raise serializers.ValidationError({'summary': 'Summary is required.'})
+        if not data.get('content'):
+            raise serializers.ValidationError({'content': 'Content is required.'})
+        return data
 
     def get_image(self, obj):
         if obj.image:

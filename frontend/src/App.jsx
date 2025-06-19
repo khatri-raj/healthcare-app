@@ -8,6 +8,7 @@ import PatientDashboard from './pages/PatientDashboard';
 import DoctorDashboard from './pages/DoctorDashboard';
 import DoctorBlogList from './pages/DoctorBlogList';
 import DoctorBlogCreate from './pages/DoctorBlogCreate';
+import DoctorBlogEdit from './pages/DoctorBlogEdit';
 import PatientBlogList from './pages/PatientBlogList';
 import PatientBlogDetail from './pages/PatientBlogDetail';
 import DoctorList from './pages/DoctorList';
@@ -34,6 +35,7 @@ function App() {
               <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
               <Route path="/doctor/blogs" element={<DoctorBlogList />} />
               <Route path="/doctor/blogs/create" element={<DoctorBlogCreate />} />
+              <Route path="/doctor/blogs/edit/:blog_id" element={<DoctorBlogEdit />} />
               <Route path="/patient/blogs" element={<PatientBlogList />} />
               <Route path="/patient/blogs/:blog_id" element={<PatientBlogDetail />} />
               <Route path="/patient/doctors" element={<DoctorList />} />

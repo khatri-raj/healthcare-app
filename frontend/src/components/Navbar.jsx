@@ -7,6 +7,8 @@ const Navbar = () => {
   const { isAuthenticated, userType } = authState;
   const navigate = useNavigate();
 
+  console.log('Navbar Auth State:', { isAuthenticated, userType });
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -41,8 +43,12 @@ const Navbar = () => {
             fontSize: '1.1rem', 
             color: '#333', 
             textDecoration: 'none', 
-            padding: '10px' 
-          }}>
+            padding: '10px',
+            transition: 'color 0.3s' 
+          }}
+          onMouseEnter={(e) => e.target.style.color = '#007bff'}
+          onMouseLeave={(e) => e.target.style.color = '#333'}
+          >
             Home
           </Link>
           {isAuthenticated ? (
@@ -53,24 +59,36 @@ const Navbar = () => {
                     fontSize: '1.1rem', 
                     color: '#333', 
                     textDecoration: 'none', 
-                    padding: '10px' 
-                  }}>
+                    padding: '10px',
+                    transition: 'color 0.3s' 
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#007bff'}
+                  onMouseLeave={(e) => e.target.style.color = '#333'}
+                  >
                     🏠 Dashboard
                   </Link>
                   <Link to="/patient/blogs" style={{ 
                     fontSize: '1.1rem', 
                     color: '#333', 
                     textDecoration: 'none', 
-                    padding: '10px' 
-                  }}>
+                    padding: '10px',
+                    transition: 'color 0.3s' 
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#007bff'}
+                  onMouseLeave={(e) => e.target.style.color = '#333'}
+                  >
                     📰 Read Health Blogs
                   </Link>
                   <Link to="/patient/doctors" style={{ 
                     fontSize: '1.1rem', 
                     color: '#333', 
                     textDecoration: 'none', 
-                    padding: '10px' 
-                  }}>
+                    padding: '10px',
+                    transition: 'color 0.3s' 
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#007bff'}
+                  onMouseLeave={(e) => e.target.style.color = '#333'}
+                  >
                     👨‍⚕️ Find Doctors
                   </Link>
                 </>
@@ -81,24 +99,36 @@ const Navbar = () => {
                     fontSize: '1.1rem', 
                     color: '#333', 
                     textDecoration: 'none', 
-                    padding: '10px' 
-                  }}>
+                    padding: '10px',
+                    transition: 'color 0.3s' 
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#007bff'}
+                  onMouseLeave={(e) => e.target.style.color = '#333'}
+                  >
                     🏥 Dashboard
                   </Link>
                   <Link to="/doctor/blogs/create" style={{ 
                     fontSize: '1.1rem', 
                     color: '#333', 
                     textDecoration: 'none', 
-                    padding: '10px' 
-                  }}>
+                    padding: '10px',
+                    transition: 'color 0.3s' 
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#007bff'}
+                  onMouseLeave={(e) => e.target.style.color = '#333'}
+                  >
                     ✍️ Create Blog
                   </Link>
                   <Link to="/doctor/blogs" style={{ 
                     fontSize: '1.1rem', 
                     color: '#333', 
                     textDecoration: 'none', 
-                    padding: '10px' 
-                  }}>
+                    padding: '10px',
+                    transition: 'color 0.3s' 
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#007bff'}
+                  onMouseLeave={(e) => e.target.style.color = '#333'}
+                  >
                     📄 My Blog Posts
                   </Link>
                 </>
@@ -109,8 +139,12 @@ const Navbar = () => {
                 background: 'none', 
                 border: 'none', 
                 padding: '10px', 
-                cursor: 'pointer' 
-              }}>
+                cursor: 'pointer',
+                transition: 'color 0.3s' 
+              }}
+              onMouseEnter={(e) => e.target.style.color = '#dc3545'}
+              onMouseLeave={(e) => e.target.style.color = '#333'}
+              >
                 🚪 Logout
               </button>
             </>
@@ -120,16 +154,24 @@ const Navbar = () => {
                 fontSize: '1.1rem', 
                 color: '#333', 
                 textDecoration: 'none', 
-                padding: '10px' 
-              }}>
+                padding: '10px',
+                transition: 'color 0.3s' 
+              }}
+              onMouseEnter={(e) => e.target.style.color = '#007bff'}
+              onMouseLeave={(e) => e.target.style.color = '#333'}
+              >
                 🔐 Login
               </Link>
               <Link to="/signup" style={{ 
                 fontSize: '1.1rem', 
                 color: '#333', 
                 textDecoration: 'none', 
-                padding: '10px' 
-              }}>
+                padding: '10px',
+                transition: 'color 0.3s' 
+              }}
+              onMouseEnter={(e) => e.target.style.color = '#007bff'}
+              onMouseLeave={(e) => e.target.style.color = '#333'}
+              >
                 📝 Signup
               </Link>
             </>

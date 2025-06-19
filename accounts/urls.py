@@ -23,6 +23,7 @@ urlpatterns = [
     path('api/doctor/appointments/', views.api_doctor_appointments, name='api_doctor_appointments'),
     path('api/doctor/blogs/', views.api_doctor_blog_list, name='api_doctor_blog_list'),
     path('api/doctor/blogs/create/', views.api_doctor_blog_create, name='api_doctor_blog_create'),
+    path('api/doctor/blogs/<int:blog_id>/', views.api_doctor_blog_update, name='api_doctor_blog_update'),    path('api/doctor/blogs/<int:blog_id>/delete/', views.api_doctor_blog_delete, name='api_doctor_blog_delete'),
     path('api/patient/blogs/', views.api_patient_blog_list, name='api_patient_blog_list'),
     path('api/patient/blogs/<int:blog_id>/', views.api_patient_blog_detail, name='api_patient_blog_detail'),
     path('api/patient/doctors/', views.api_doctor_list, name='api_doctor_list'),

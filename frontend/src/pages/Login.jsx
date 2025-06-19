@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 
 const Login = () => {
@@ -9,70 +9,94 @@ const Login = () => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const handleChange = (e) => {
+    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:8000/api/login/', credentials);
-      login(response.data.access, response.data.user_type);
-      navigate(`/${response.data.user_type}/dashboard`);
+      console.log('Login response:', response.data);
+      const { access, refresh, user_type } = response.data;
+      login(access, refresh, user_type);
+      if (user_type === 'patient') {
+        navigate('/patient/dashboard');
+      } else if (user_type === 'doctor') {
+        navigate('/doctor/dashboard');
+      } else {
+        setError('Invalid user type');
+      }
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+      setError(err.response?.data?.error || 'Invalid credentials');
+      console.error('Login error:', err.response?.data);
     }
   };
 
   return (
     <div style={{ 
       maxWidth: '400px', 
-      margin: '0 auto', 
-      padding: '40px 20px' 
+      margin: '50px auto', 
+      padding: '20px', 
+      backgroundColor: '#fff', 
+      borderRadius: '8px', 
+      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)' 
     }}>
-      <h1 style={{ 
-        fontSize: '2rem', 
-        fontWeight: 'bold', 
-        color: '#333', 
-        marginBottom: '20px', 
-        textAlign: 'center' 
-      }}>
-        Login
-      </h1>
+      <h2 style={{ textAlign: 'center', color: '#333', marginBottom: '20px' }}>Login</h2>
       {error && (
         <p style={{ color: '#dc3545', textAlign: 'center', marginBottom: '15px' }}>{error}</p>
       )}
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={credentials.username}
-          onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-          style={{ 
-            padding: '10px', 
-            fontSize: '1rem', 
-            border: '1px solid #ccc', 
-            borderRadius: '4px' 
-          }}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={credentials.password}
-          onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-          style={{ 
-            padding: '10px', 
-            fontSize: '1rem', 
-            border: '1px solid #ccc', 
-            borderRadius: '4px' 
-          }}
-        />
+        <div>
+          <label htmlFor="username" style={{ display: 'block', marginBottom: '5px', color: '#333' }}>
+            Username
+          </label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={credentials.username}
+            onChange={handleChange}
+            required
+            style={{
+              width: '100%',
+              padding: '10px',
+              fontSize: '1rem',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+            }}
+          />
+        </div>
+        <div>
+          <label htmlFor="password" style={{ display: 'block', marginBottom: '5px', color: '#333' }}>
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={credentials.password}
+            onChange={handleChange}
+            required
+            style={{
+              width: '100%',
+              padding: '10px',
+              fontSize: '1rem',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+            }}
+          />
+        </div>
         <button
           type="submit"
-          style={{ 
-            padding: '10px', 
-            fontSize: '1rem', 
-            backgroundColor: '#007bff', 
-            color: '#fff', 
-            border: 'none', 
-            borderRadius: '4px', 
-            cursor: 'pointer' 
+          style={{
+            padding: '10px',
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '1rem',
           }}
         >
           Login

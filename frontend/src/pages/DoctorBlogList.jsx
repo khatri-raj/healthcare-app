@@ -28,6 +28,18 @@ const DoctorBlogList = () => {
     }
   }, [isAuthenticated, userType, accessToken, navigate]);
 
+  const handleDelete = async (blogId) => {
+    if (!window.confirm('Are you sure you want to delete this blog post?')) return;
+    try {
+      await axios.delete(`http://localhost:8000/api/doctor/blogs/${blogId}/delete/`, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+      setBlogs(blogs.filter(blog => blog.id !== blogId));
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to delete blog');
+    }
+  };
+
   if (!isAuthenticated || userType !== 'doctor') {
     return null;
   }
@@ -69,15 +81,41 @@ const DoctorBlogList = () => {
                 alignItems: 'center' 
               }}>
                 <h5 style={{ fontSize: '1.2rem', margin: 0 }}>{post.title}</h5>
-                <span style={{ 
-                  padding: '5px 10px', 
-                  borderRadius: '4px', 
-                  backgroundColor: post.is_draft ? '#ffc107' : '#28a745', 
-                  color: post.is_draft ? '#333' : '#fff', 
-                  fontSize: '0.2rem' 
-                }}>
-                  {post.is_draft ? 'Draft' : 'Published'}
-                </span>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                  <span style={{ 
+                    padding: '5px 10px', 
+                    borderRadius: '4px', 
+                    backgroundColor: post.is_draft ? '#ffc107' : '#28a745', 
+                    color: post.is_draft ? '#333' : '#fff', 
+                    fontSize: '0.875rem' 
+                  }}>
+                    {post.is_draft ? 'Draft' : 'Published'}
+                  </span>
+                  <Link to={`/doctor/blogs/edit/${post.id}`} style={{ 
+                    padding: '5px 10px', 
+                    backgroundColor: '#ffc107', 
+                    color: '#333', 
+                    borderRadius: '4px', 
+                    textDecoration: 'none', 
+                    fontSize: '0.875rem' 
+                  }}>
+                    Edit
+                  </Link>
+                  <button 
+                    onClick={() => handleDelete(post.id)} 
+                    style={{ 
+                      padding: '5px 10px', 
+                      backgroundColor: '#dc3545', 
+                      color: '#fff', 
+                      border: 'none', 
+                      borderRadius: '4px', 
+                      cursor: 'pointer', 
+                      fontSize: '0.875rem' 
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
               <small style={{ color: '#666', display: 'block', marginTop: '5px' }}>
                 {post.category || 'N/A'} | {new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}

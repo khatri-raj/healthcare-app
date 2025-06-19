@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .models import CustomUser, BlogPost, Appointment
@@ -18,8 +18,11 @@ from google.oauth2 import service_account
 from googleapiclient.errors import HttpError
 from datetime import datetime
 import os
+import logging
 
-# HTML Views
+logger = logging.getLogger(__name__)
+
+# HTML Views (unchanged)
 def home(request):
     return render(request, 'home.html')
 
@@ -274,11 +277,48 @@ def api_doctor_blog_list(request):
 def api_doctor_blog_create(request):
     if request.user.user_type != 'doctor':
         return Response({'error': 'Unauthorized'}, status=status.HTTP_403_FORBIDDEN)
-    serializer = BlogPostSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save(author=request.user)
-        return Response({'message': 'Blog created'}, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        serializer = BlogPostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(author=request.user)
+            return Response({'message': 'Blog created'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        logger.error(f"Error creating blog: {str(e)}")
+        return Response({'error': 'Server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET', 'PUT', 'PATCH'])
+@permission_classes([IsAuthenticated])
+def api_doctor_blog_update(request, blog_id):
+    if request.user.user_type != 'doctor':
+        return Response({'error': 'Unauthorized'}, status=status.HTTP_403_FORBIDDEN)
+    blog = get_object_or_404(BlogPost, id=blog_id, author=request.user)
+    try:
+        if request.method == 'GET':
+            serializer = BlogPostSerializer(blog)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:  # PUT or PATCH
+            serializer = BlogPostSerializer(blog, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'Blog updated'}, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        logger.error(f"Error processing blog {blog_id}: {str(e)}")
+        return Response({'error': 'Server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def api_doctor_blog_delete(request, blog_id):
+    if request.user.user_type != 'doctor':
+        return Response({'error': 'Unauthorized'}, status=status.HTTP_403_FORBIDDEN)
+    blog = get_object_or_404(BlogPost, id=blog_id, author=request.user)
+    try:
+        blog.delete()
+        return Response({'message': 'Blog deleted'}, status=status.HTTP_204_NO_CONTENT)
+    except Exception as e:
+        logger.error(f"Error deleting blog: {str(e)}")
+        return Response({'error': 'Server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
