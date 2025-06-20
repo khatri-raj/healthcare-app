@@ -32,11 +32,21 @@ const PatientDashboard = () => {
     return null;
   }
 
+  // Get user details from localStorage
+  const firstName = localStorage.getItem('first_name') || 'Patient';
+  const lastName = localStorage.getItem('last_name') || '';
+  const username = localStorage.getItem('username') || 'N/A';
+  const email = localStorage.getItem('email') || 'N/A';
+  const addressLine1 = localStorage.getItem('address_line1') || 'N/A';
+  const city = localStorage.getItem('city') || 'N/A';
+  const state = localStorage.getItem('state') || 'N/A';
+  const pincode = localStorage.getItem('pincode') || 'N/A';
+
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
         <h2 style={{ fontWeight: 'bold', fontSize: '1.8rem', color: '#333' }}>
-          Welcome, {localStorage.getItem('first_name') || 'Patient'} {localStorage.getItem('last_name') || ''}{' '}
+          Welcome, {firstName} {lastName}{' '}
           <span style={{ color: '#666', fontSize: '1rem' }}>(Patient)</span>
         </h2>
       </div>
@@ -61,13 +71,13 @@ const PatientDashboard = () => {
         </h5>
         <ul style={{ listStyle: 'none', padding: 0 }}>
           <li style={{ padding: '10px 0', borderBottom: '1px solid #eee' }}>
-            <strong>Username:</strong> {localStorage.getItem('username') || 'N/A'}
+            <strong>Username:</strong> {username}
           </li>
           <li style={{ padding: '10px 0', borderBottom: '1px solid #eee' }}>
-            <strong>Email:</strong> {localStorage.getItem('email') || 'N/A'}
+            <strong>Email:</strong> {email}
           </li>
           <li style={{ padding: '10px 0' }}>
-            <strong>Address:</strong> {localStorage.getItem('address_line1') || 'N/A'}, {localStorage.getItem('city') || 'N/A'}, {localStorage.getItem('state') || 'N/A'} - {localStorage.getItem('pincode') || 'N/A'}
+            <strong>Address:</strong> {addressLine1}, {city}, {state} - {pincode}
           </li>
         </ul>
       </div>

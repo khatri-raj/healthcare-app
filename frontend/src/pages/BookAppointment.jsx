@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const BookAppointment = () => {
   const { doctor_id } = useParams();
-  const [doctor, setDoctor] = useState(null);
+  const { state } = useLocation();
+  const [doctor, setDoctor] = useState(state?.doctor || null);
   const [formData, setFormData] = useState({ speciality: '', date: '', start_time: '' });
   const [error, setError] = useState(null);
   const { authState } = useContext(AuthContext);
@@ -15,33 +16,62 @@ const BookAppointment = () => {
   useEffect(() => {
     if (!isAuthenticated || userType !== 'patient') {
       navigate('/login');
-    } else {
+    } else if (!doctor) {
       const fetchDoctor = async () => {
         try {
+          console.log(`Fetching doctor with ID: ${doctor_id}`);
           const response = await axios.get(`http://localhost:8000/api/patient/doctors/${doctor_id}/`, {
             headers: { Authorization: `Bearer ${accessToken}` }
           });
           setDoctor(response.data);
         } catch (err) {
+          console.error('Fetch doctor error:', err.response?.data);
           setError(err.response?.data?.error || 'Failed to fetch doctor');
         }
       };
       fetchDoctor();
     }
-  }, [doctor_id, isAuthenticated, userType, accessToken, navigate]);
+  }, [doctor_id, isAuthenticated, userType, accessToken, navigate, doctor]);
+
+  const normalizeDate = (dateStr) => {
+    if (!dateStr) return '';
+    if (dateStr.match(/^\d{2}-\d{2}-\d{4}$/)) { // DD-MM-YYYY
+      const [day, month, year] = dateStr.split('-');
+      return `${year}-${month}-${day}`;
+    }
+    return dateStr; // Assume YYYY-MM-DD
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isAuthenticated || userType !== 'patient') {
       navigate('/login');
     } else {
+      const startTime = formData.start_time.split(':').slice(0, 2).join(':');
+      const startDateTime = new Date(`2025-06-26T${startTime}:00`);
+      const endDateTime = new Date(startDateTime.getTime() + 45 * 60 * 1000); // Add 45 minutes
+      const endTime = endDateTime.toTimeString().slice(0, 5); // HH:MM
+      const normalizedFormData = {
+        speciality: formData.speciality,
+        date: normalizeDate(formData.date),
+        start_time: startTime,
+        end_time: endTime,
+      };
+      console.log('Sending appointment data:', normalizedFormData);
       try {
-        await axios.post(`http://localhost:8000/api/patient/book_appointment/${doctor_id}/`, formData, {
-          headers: { Authorization: `Bearer ${accessToken}` }
-        });
-        navigate('/patient/dashboard');
+        const response = await axios.post(
+          `http://localhost:8000/api/patient/book_appointment/${doctor_id}/`,
+          normalizedFormData,
+          { headers: { Authorization: `Bearer ${accessToken}` } }
+        );
+        navigate(`/patient/appointment_confirmed/${response.data.id}`);
       } catch (err) {
-        setError(err.response?.data?.error || 'Failed to book appointment');
+        console.error('Book appointment error:', err.response?.data);
+        const errorData = err.response?.data;
+        const errorMessage = errorData && typeof errorData === 'object' && !errorData.error
+          ? Object.entries(errorData).map(([key, value]) => `${key}: ${value.join(', ')}`).join('; ')
+          : errorData?.error || 'Failed to book appointment';
+        setError(errorMessage);
       }
     }
   };
@@ -90,7 +120,10 @@ const BookAppointment = () => {
               type="date"
               id="date"
               value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              onChange={(e) => {
+                console.log('Date input:', e.target.value);
+                setFormData({ ...formData, date: e.target.value });
+              }}
               required
               style={{ 
                 width: '100%', 
@@ -107,7 +140,10 @@ const BookAppointment = () => {
               type="time"
               id="start_time"
               value={formData.start_time}
-              onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+              onChange={(e) => {
+                console.log('Time input:', e.target.value);
+                setFormData({ ...formData, start_time: e.target.value });
+              }}
               required
               style={{ 
                 width: '100%', 

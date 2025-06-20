@@ -46,7 +46,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
     doctor = CustomUserSerializer(read_only=True)
     date = serializers.DateField(format="%Y-%m-%d")
     start_time = serializers.TimeField(format="%H:%M")
-    end_time = serializers.TimeField(format="%H:%M")
+    end_time = serializers.TimeField(format="%H:%M", required=False)  # Make end_time optional
 
     class Meta:
         model = Appointment

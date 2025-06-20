@@ -14,6 +14,7 @@ import PatientBlogDetail from './pages/PatientBlogDetail';
 import DoctorList from './pages/DoctorList';
 import BookAppointment from './pages/BookAppointment';
 import Navbar from './components/Navbar';
+import AppointmentConfirmed from './pages/AppointmentConfirmed';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
               <Route path="/patient/blogs/:blog_id" element={<PatientBlogDetail />} />
               <Route path="/patient/doctors" element={<DoctorList />} />
               <Route path="/patient/book_appointment/:doctor_id" element={<BookAppointment />} />
+              <Route path="/patient/appointment_confirmed/:appointment_id" element={<AppointmentConfirmed />} />
             </Routes>
           </div>
           <footer style={{ 

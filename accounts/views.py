@@ -234,15 +234,19 @@ def api_signup(request):
 def api_user_login(request):
     username = request.data.get('username')
     password = request.data.get('password')
+    print(f"Login attempt with username: {username}, password: {password}")  # Add logging
     user = authenticate(request, username=username, password=password)
     if user is not None:
         from rest_framework_simplejwt.tokens import RefreshToken
         refresh = RefreshToken.for_user(user)
+        user_serializer = CustomUserSerializer(user)
         return Response({
             'access': str(refresh.access_token),
             'refresh': str(refresh),
-            'user_type': user.user_type
+            'user_type': user.user_type,
+            'user': user_serializer.data
         })
+    print("Authentication failed")  # Add logging
     return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
@@ -349,20 +353,72 @@ def api_doctor_list(request):
     serializer = CustomUserSerializer(doctors, many=True)
     return Response({'doctors': serializer.data})
 
+from googleapiclient.discovery import build
+from google.oauth2 import service_account
+from googleapiclient.errors import HttpError
+from datetime import datetime
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def api_book_appointment(request, doctor_id):
+    print(f"Booking appointment for doctor_id: {doctor_id}, user: {request.user.username}")
+    print(f"Request data: {request.data}")
     if request.user.user_type != 'patient':
+        print("User is not a patient")
         return Response({'error': 'Unauthorized'}, status=status.HTTP_403_FORBIDDEN)
     doctor = get_object_or_404(CustomUser, id=doctor_id, user_type='doctor')
+    print(f"Doctor found: {doctor.username}")
     serializer = AppointmentSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save(patient=request.user, doctor=doctor)
+        print("Serializer is valid, saving appointment")
+        appointment = serializer.save(patient=request.user, doctor=doctor)
+        try:
+            if not os.path.exists(settings.GOOGLE_CALENDAR_CREDENTIALS_PATH):
+                raise FileNotFoundError(f"Credentials file not found at {settings.GOOGLE_CALENDAR_CREDENTIALS_PATH}")
+            create_google_calendar_event(appointment)
+            print("Google Calendar event created")
+        except Exception as e:
+            print(f"Google Calendar error: {str(e)}")
         return Response({'message': 'Appointment booked', 'id': serializer.data['id']}, status=status.HTTP_201_CREATED)
+    print(f"Serializer errors: {serializer.errors}")
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def api_appointment_confirmed(request, appointment_id):
+    if request.user.user_type != 'patient':
+        return Response({'error': 'Unauthorized'}, status=status.HTTP_403_FORBIDDEN)
+    appointment = get_object_or_404(Appointment, id=appointment_id, patient=request.user)
+    serializer = AppointmentSerializer(appointment)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def api_user_logout(request):
     logout(request)
     return Response({'message': 'Logged out'})
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from .models import CustomUser
+from .serializers import CustomUserSerializer
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def api_doctor_detail(request, doctor_id):
+    print(f"Fetching doctor with ID: {doctor_id}")  # Add logging
+    if request.user.user_type != 'patient':
+        print("User is not a patient")
+        return Response({'error': 'Unauthorized'}, status=status.HTTP_403_FORBIDDEN)
+    try:
+        doctor = CustomUser.objects.get(id=doctor_id, user_type='doctor')
+        serializer = CustomUserSerializer(doctor)
+        print(f"Doctor found: {doctor.username}")
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except CustomUser.DoesNotExist:
+        print(f"Doctor not found for ID: {doctor_id}")
+        return Response({'error': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(f"Error fetching doctor: {str(e)}")
+        return Response({'error': f'Server error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

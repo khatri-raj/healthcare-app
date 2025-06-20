@@ -32,11 +32,16 @@ const DoctorDashboard = () => {
     return null;
   }
 
+  // Get user details from localStorage
+  const username = localStorage.getItem('username') || 'Doctor';
+  const email = localStorage.getItem('email') || 'N/A';
+  const addressLine1 = localStorage.getItem('address_line1') || 'N/A';
+
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
         <h2 style={{ fontWeight: 'bold', fontSize: '1.8rem', color: '#333' }}>
-          Welcome, Dr. {localStorage.getItem('username') || 'Doctor'}{' '}
+          Welcome, Dr. {username}{' '}
           <span style={{ color: '#666', fontSize: '1rem' }}>(Doctor)</span>
         </h2>
       </div>
@@ -61,13 +66,13 @@ const DoctorDashboard = () => {
         </h5>
         <ul style={{ listStyle: 'none', padding: 0 }}>
           <li style={{ padding: '10px 0', borderBottom: '1px solid #eee' }}>
-            <strong>Username:</strong> {localStorage.getItem('username') || 'N/A'}
+            <strong>Username:</strong> {username}
           </li>
           <li style={{ padding: '10px 0', borderBottom: '1px solid #eee' }}>
-            <strong>Email:</strong> {localStorage.getItem('email') || 'N/A'}
+            <strong>Email:</strong> {email}
           </li>
           <li style={{ padding: '10px 0' }}>
-            <strong>Address:</strong> {localStorage.getItem('address_line1') || 'N/A'}
+            <strong>Address:</strong> {addressLine1}
           </li>
         </ul>
       </div>

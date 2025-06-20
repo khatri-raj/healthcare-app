@@ -62,17 +62,18 @@ const DoctorList = () => {
                 {doctor.first_name} {doctor.last_name}
               </h5>
               <Link
-                to={`/patient/book_appointment/${doctor.id}`}
-                style={{ 
-                  padding: '8px 15px', 
-                  backgroundColor: '#007bff', 
-                  color: '#fff', 
-                  borderRadius: '4px', 
-                  textDecoration: 'none' 
-                }}
-              >
-                Book Appointment
-              </Link>
+  to={`/patient/book_appointment/${doctor.id}`}
+  state={{ doctor }} // Pass doctor data
+  style={{ 
+    padding: '8px 15px', 
+    backgroundColor: '#007bff', 
+    color: '#fff', 
+    borderRadius: '4px', 
+    textDecoration: 'none' 
+  }}
+>
+  Book Appointment
+</Link>
             </div>
           </div>
         ))}

@@ -43,14 +43,12 @@ export const AuthProvider = ({ children }) => {
 
   const refreshToken = async () => {
     try {
-      console.log('Refreshing token with:', authState.refreshToken);
       const response = await axios.post('http://localhost:8000/api/token/refresh/', {
         refresh: authState.refreshToken,
       });
       const { access } = response.data;
       localStorage.setItem('access_token', access);
       setAuthState({ ...authState, accessToken: access });
-      console.log('Token refreshed:', access);
       return access;
     } catch (err) {
       console.error('Token refresh failed:', err);

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const Signup = () => {
   const [userData, setUserData] = useState({
@@ -8,6 +9,7 @@ const Signup = () => {
     password: '', confirm_password: '', address_line1: '', city: '', state: '',
     pincode: '', user_type: 'patient'
   });
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -17,10 +19,35 @@ const Signup = () => {
       return;
     }
     try {
+      // Signup request
       await axios.post('http://localhost:8000/api/signup/', userData);
-      navigate('/login');
+
+      // Auto-login after signup
+      const loginResponse = await axios.post('http://localhost:8000/api/login/', {
+        username: userData.username,
+        password: userData.password,
+      });
+      const { access, refresh, user_type, user } = loginResponse.data;
+
+      // Save user details to localStorage
+      localStorage.setItem('first_name', user.first_name || '');
+      localStorage.setItem('last_name', user.last_name || '');
+      localStorage.setItem('username', user.username || '');
+      localStorage.setItem('email', user.email || '');
+      localStorage.setItem('address_line1', user.address_line1 || '');
+      localStorage.setItem('city', user.city || '');
+      localStorage.setItem('state', user.state || '');
+      localStorage.setItem('pincode', user.pincode || '');
+
+      login(access, refresh, user_type);
+      if (user_type === 'patient') {
+        navigate('/patient/dashboard');
+      } else if (user_type === 'doctor') {
+        navigate('/doctor/dashboard');
+      }
     } catch (error) {
-      alert('Signup failed');
+      alert('Signup or login failed');
+      console.error('Error:', error.response?.data);
     }
   };
 

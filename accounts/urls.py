@@ -27,6 +27,8 @@ urlpatterns = [
     path('api/patient/blogs/', views.api_patient_blog_list, name='api_patient_blog_list'),
     path('api/patient/blogs/<int:blog_id>/', views.api_patient_blog_detail, name='api_patient_blog_detail'),
     path('api/patient/doctors/', views.api_doctor_list, name='api_doctor_list'),
+    path('api/patient/doctors/<int:doctor_id>/', views.api_doctor_detail, name='api_doctor_detail'),
+    path('api/patient/appointment_confirmed/<int:appointment_id>/', views.api_appointment_confirmed, name='api_appointment_confirmed'),
     path('api/patient/book_appointment/<int:doctor_id>/', views.api_book_appointment, name='api_book_appointment'),
     path('api/logout/', views.api_user_logout, name='api_logout'),
 ]

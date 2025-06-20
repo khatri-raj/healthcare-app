@@ -18,7 +18,18 @@ const Login = () => {
     try {
       const response = await axios.post('http://localhost:8000/api/login/', credentials);
       console.log('Login response:', response.data);
-      const { access, refresh, user_type } = response.data;
+      const { access, refresh, user_type, user } = response.data;
+
+      // Save user details to localStorage
+      localStorage.setItem('first_name', user.first_name || '');
+      localStorage.setItem('last_name', user.last_name || '');
+      localStorage.setItem('username', user.username || '');
+      localStorage.setItem('email', user.email || '');
+      localStorage.setItem('address_line1', user.address_line1 || '');
+      localStorage.setItem('city', user.city || '');
+      localStorage.setItem('state', user.state || '');
+      localStorage.setItem('pincode', user.pincode || '');
+
       login(access, refresh, user_type);
       if (user_type === 'patient') {
         navigate('/patient/dashboard');
