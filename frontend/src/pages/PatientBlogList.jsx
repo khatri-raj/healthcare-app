@@ -19,8 +19,10 @@ const PatientBlogList = () => {
           const response = await axios.get('http://localhost:8000/api/patient/blogs/', {
             headers: { Authorization: `Bearer ${accessToken}` }
           });
+          console.log('Fetched Blogs:', response.data);
           setBlogsByCategory(response.data);
         } catch (err) {
+          console.error('Fetch Error:', err.response?.data);
           setError(err.response?.data?.error || 'Failed to fetch blogs');
         }
       };
@@ -54,42 +56,62 @@ const PatientBlogList = () => {
               gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
               gap: '20px' 
             }}>
-              {blogs.map((blog) => (
-                <div key={blog.id} style={{ 
-                  backgroundColor: '#fff', 
-                  borderRadius: '8px', 
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', 
-                  overflow: 'hidden' 
-                }}>
-                  {blog.image && (
-                    <img 
-                      src={blog.image} 
-                      alt="Blog Image" 
-                      style={{ width: '100%', height: '200px', objectFit: 'cover' }} 
-                    />
-                  )}
-                  <div style={{ padding: '15px' }}>
-                    <h5 style={{ fontSize: '1.2rem', color: '#333', marginBottom: '10px' }}>{blog.title}</h5>
-                    <p style={{ color: '#666', marginBottom: '10px' }}>{blog.summary || 'No summary available'}</p>
-                    <p style={{ fontSize: '0.9rem', color: '#666' }}>
-                      By Dr. {blog.author?.username || 'N/A'} | {new Date(blog.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </p>
-                    <Link
-                      to={`/patient/blogs/${blog.id}`}
-                      style={{ 
-                        display: 'inline-block', 
-                        padding: '8px 15px', 
-                        backgroundColor: '#007bff', 
-                        color: '#fff', 
-                        borderRadius: '4px', 
-                        textDecoration: 'none' 
-                      }}
-                    >
-                      Read More
-                    </Link>
+              {blogs.map((blog) => {
+                console.log('Blog Image URL:', blog.image);
+                return (
+                  <div key={blog.id} style={{ 
+                    backgroundColor: '#fff', 
+                    borderRadius: '8px', 
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', 
+                    overflow: 'hidden' 
+                  }}>
+                    {blog.image ? (
+                      <img 
+                        src={blog.image} 
+                        alt={blog.title} 
+                        style={{ width: '100%', height: '200px', objectFit: 'cover' }} 
+                        onError={(e) => {
+                          console.error('Image failed to load:', blog.image);
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <div style={{ 
+                        width: '100%', 
+                        height: '200px', 
+                        backgroundColor: '#f0f0f0', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        color: '#666', 
+                        fontSize: '0.9rem' 
+                      }}>
+                        No Image Available
+                      </div>
+                    )}
+                    <div style={{ padding: '15px' }}>
+                      <h5 style={{ fontSize: '1.2rem', color: '#333', marginBottom: '10px' }}>{blog.title}</h5>
+                      <p style={{ color: '#666', marginBottom: '10px' }}>{blog.summary || 'No summary available'}</p>
+                      <p style={{ fontSize: '0.9rem', color: '#666' }}>
+                        By Dr. {blog.author?.username || 'N/A'} | {new Date(blog.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </p>
+                      <Link
+                        to={`/patient/blogs/${blog.id}`}
+                        style={{ 
+                          display: 'inline-block', 
+                          padding: '8px 15px', 
+                          backgroundColor: '#007bff', 
+                          color: '#fff', 
+                          borderRadius: '4px', 
+                          textDecoration: 'none' 
+                        }}
+                      >
+                        Read More
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         ))

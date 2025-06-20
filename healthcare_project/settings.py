@@ -146,3 +146,8 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+# settings.py
+CORS_ALLOW_ALL_ORIGINS = True  # For development only; restrict in production
+CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+CORS_ALLOW_HEADERS = ['Authorization', 'Content-Type']

@@ -276,13 +276,16 @@ def api_doctor_blog_list(request):
     serializer = BlogPostSerializer(blogs, many=True)
     return Response({'blogs': serializer.data})
 
+# views.py
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def api_doctor_blog_create(request):
     if request.user.user_type != 'doctor':
         return Response({'error': 'Unauthorized'}, status=status.HTTP_403_FORBIDDEN)
     try:
-        serializer = BlogPostSerializer(data=request.data)
+        print('Request Data:', request.data)  # Log incoming data
+        print('Request Files:', request.FILES)  # Log uploaded files
+        serializer = BlogPostSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save(author=request.user)
             return Response({'message': 'Blog created'}, status=status.HTTP_201_CREATED)
@@ -290,7 +293,7 @@ def api_doctor_blog_create(request):
     except Exception as e:
         logger.error(f"Error creating blog: {str(e)}")
         return Response({'error': 'Server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+    
 @api_view(['GET', 'PUT', 'PATCH'])
 @permission_classes([IsAuthenticated])
 def api_doctor_blog_update(request, blog_id):

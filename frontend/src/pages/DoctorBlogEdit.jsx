@@ -6,7 +6,12 @@ import { AuthContext } from '../context/AuthContext';
 const DoctorBlogEdit = () => {
   const { blog_id } = useParams();
   const [blogData, setBlogData] = useState({
-    title: '', image: null, category: 'mental_health', summary: '', content: '', is_draft: true
+    title: '',
+    image: null,
+    category: 'mental_health',
+    summary: '',
+    content: '',
+    is_draft: true
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,6 +30,7 @@ const DoctorBlogEdit = () => {
           const response = await axios.get(`http://localhost:8000/api/doctor/blogs/${blog_id}/`, {
             headers: { Authorization: `Bearer ${token}` }
           });
+          console.log('Fetched Blog Data:', response.data);
           setBlogData({
             title: response.data.title || '',
             image: null, // Image is handled separately
@@ -35,6 +41,7 @@ const DoctorBlogEdit = () => {
           });
           setLoading(false);
         } catch (err) {
+          console.error('Fetch Error:', err.response?.data);
           if (err.response?.status === 401) {
             const newToken = await refreshToken();
             if (newToken) {
@@ -63,21 +70,24 @@ const DoctorBlogEdit = () => {
         if (blogData.image) formData.append('image', blogData.image);
         if (blogData.category) formData.append('category', blogData.category);
         if (blogData.summary) formData.append('summary', blogData.summary);
-        if (blogData.content) formData.append('content', blogData.content);
+        if (blogData.content) formData.append('content', blogData.content); // Fixed syntax
         formData.append('is_draft', blogData.is_draft.toString());
 
         // Log FormData for debugging
         for (let [key, value] of formData.entries()) {
-          console.log(`${key}:`, value);
+          console.log(`${key}: ${value instanceof File ? value.name : value}`);
         }
-        await axios.patch(`http://localhost:8000/api/doctor/blogs/${blog_id}/`, formData, {
+
+        const response = await axios.patch(`http://localhost:8000/api/doctor/blogs/${blog_id}/`, formData, {
           headers: { 
             Authorization: `Bearer ${accessToken}`, 
             'Content-Type': 'multipart/form-data' 
           }
         });
+        console.log('Update Response:', response.data);
         navigate('/doctor/blogs');
       } catch (err) {
+        console.error('Update Error:', err.response?.data);
         if (err.response?.status === 401) {
           const newToken = await refreshToken();
           if (newToken) {
@@ -89,14 +99,16 @@ const DoctorBlogEdit = () => {
               if (blogData.summary) formData.append('summary', blogData.summary);
               if (blogData.content) formData.append('content', blogData.content);
               formData.append('is_draft', blogData.is_draft.toString());
-              await axios.patch(`http://localhost:8000/api/doctor/blogs/${blog_id}/`, formData, {
+              const retryResponse = await axios.patch(`http://localhost:8000/api/doctor/blogs/${blog_id}/`, formData, {
                 headers: { 
                   Authorization: `Bearer ${newToken}`, 
                   'Content-Type': 'multipart/form-data'
                 }
               });
+              console.log('Retry Response:', retryResponse.data);
               navigate('/doctor/blogs');
             } catch (retryErr) {
+              console.error('Retry Error:', retryErr.response?.data);
               setError(JSON.stringify(retryErr.response?.data) || 'Failed to update blog after token refresh');
             }
           } else {
@@ -146,7 +158,12 @@ const DoctorBlogEdit = () => {
           <input
             type="file"
             id="image"
-            onChange={(e) => setBlogData({ ...blogData, image: e.target.files[0] })}
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              console.log('Selected Image:', file ? file.name : 'None');
+              setBlogData({ ...blogData, image: file });
+            }}
             style={{ width: '100%', padding: '10px' }}
           />
         </div>

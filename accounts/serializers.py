@@ -14,18 +14,27 @@ class CustomUserSerializer(serializers.ModelSerializer):
             return f"{settings.MEDIA_URL}{obj.profile_picture}"
         return None
 
+# serializers.py
 class BlogPostSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(required=False, allow_null=True)
+    image = serializers.SerializerMethodField()  # Use SerializerMethodField for image
     author = CustomUserSerializer(read_only=True)
-    created_at = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M:%S")  # Mark as read_only
+    created_at = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M:%S")
 
     class Meta:
         model = BlogPost
         fields = ['id', 'title', 'image', 'category', 'summary', 'content', 'is_draft', 'author', 'created_at']
         extra_kwargs = {
-            'image': {'required': False},
             'is_draft': {'required': True}
         }
+
+    def get_image(self, obj):
+        if obj.image:
+            # Ensure the full URL is returned
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return f"{settings.MEDIA_URL}{obj.image}"
+        return None
 
     def validate(self, data):
         if not data.get('title'):
@@ -35,11 +44,6 @@ class BlogPostSerializer(serializers.ModelSerializer):
         if not data.get('content'):
             raise serializers.ValidationError({'content': 'Content is required.'})
         return data
-
-    def get_image(self, obj):
-        if obj.image:
-            return f"{settings.MEDIA_URL}{obj.image}"
-        return None
 
 class AppointmentSerializer(serializers.ModelSerializer):
     patient = CustomUserSerializer(read_only=True)

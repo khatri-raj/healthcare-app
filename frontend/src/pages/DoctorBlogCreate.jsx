@@ -5,7 +5,12 @@ import { AuthContext } from '../context/AuthContext';
 
 const DoctorBlogCreate = () => {
   const [blogData, setBlogData] = useState({
-    title: '', image: null, category: 'mental_health', summary: '', content: '', is_draft: true
+    title: '',
+    image: null,
+    category: 'mental_health',
+    summary: '',
+    content: '',
+    is_draft: true
   });
   const [error, setError] = useState(null);
   const { authState, refreshToken } = useContext(AuthContext);
@@ -19,7 +24,6 @@ const DoctorBlogCreate = () => {
     } else {
       try {
         const formData = new FormData();
-        // Only append non-null/undefined fields
         if (blogData.title) formData.append('title', blogData.title);
         if (blogData.image) formData.append('image', blogData.image);
         if (blogData.category) formData.append('category', blogData.category);
@@ -29,16 +33,19 @@ const DoctorBlogCreate = () => {
 
         // Log FormData for debugging
         for (let [key, value] of formData.entries()) {
-          console.log(`${key}:`, value);
+          console.log(`${key}: ${value instanceof File ? value.name : value}`);
         }
-        await axios.post('http://localhost:8000/api/doctor/blogs/create/', formData, {
+
+        const response = await axios.post('http://localhost:8000/api/doctor/blogs/create/', formData, {
           headers: { 
             Authorization: `Bearer ${accessToken}`, 
             'Content-Type': 'multipart/form-data' 
           }
         });
+        console.log('Blog Creation Response:', response.data);
         navigate('/doctor/blogs');
       } catch (err) {
+        console.error('Blog Creation Error:', err.response?.data);
         if (err.response?.status === 401) {
           const newToken = await refreshToken();
           if (newToken) {
@@ -50,14 +57,16 @@ const DoctorBlogCreate = () => {
               if (blogData.summary) formData.append('summary', blogData.summary);
               if (blogData.content) formData.append('content', blogData.content);
               formData.append('is_draft', blogData.is_draft.toString());
-              await axios.post('http://localhost:8000/api/doctor/blogs/create/', formData, {
+              const retryResponse = await axios.post('http://localhost:8000/api/doctor/blogs/create/', formData, {
                 headers: { 
                   Authorization: `Bearer ${newToken}`, 
                   'Content-Type': 'multipart/form-data'
                 }
               });
+              console.log('Retry Response:', retryResponse.data);
               navigate('/doctor/blogs');
             } catch (retryErr) {
+              console.error('Retry Error:', retryErr.response?.data);
               setError(JSON.stringify(retryErr.response?.data) || 'Failed to create blog after token refresh');
             }
           } else {
@@ -103,7 +112,12 @@ const DoctorBlogCreate = () => {
           <input
             type="file"
             id="image"
-            onChange={(e) => setBlogData({ ...blogData, image: e.target.files[0] })}
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              console.log('Selected Image:', file ? file.name : 'None');
+              setBlogData({ ...blogData, image: file });
+            }}
             style={{ width: '100%', padding: '10px' }}
           />
         </div>

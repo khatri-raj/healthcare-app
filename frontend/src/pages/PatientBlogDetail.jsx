@@ -20,8 +20,11 @@ const PatientBlogDetail = () => {
           const response = await axios.get(`http://localhost:8000/api/patient/blogs/${blog_id}/`, {
             headers: { Authorization: `Bearer ${accessToken}` }
           });
+          console.log('Fetched Blog:', response.data);
+          console.log('Blog Image URL:', response.data.image);
           setBlog(response.data);
         } catch (err) {
+          console.error('Fetch Error:', err.response?.data);
           setError(err.response?.data?.error || 'Failed to fetch blog');
         }
       };
@@ -43,12 +46,29 @@ const PatientBlogDetail = () => {
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', 
         overflow: 'hidden' 
       }}>
-        {blog.image && (
+        {blog.image ? (
           <img 
             src={blog.image} 
-            alt="Blog Image" 
+            alt={blog.title} 
             style={{ width: '100%', height: '300px', objectFit: 'cover' }} 
+            onError={(e) => {
+              console.error('Image failed to load:', blog.image);
+              e.target.style.display = 'none';
+            }}
           />
+        ) : (
+          <div style={{ 
+            width: '100%', 
+            height: '300px', 
+            backgroundColor: '#f0f0f0', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            color: '#666', 
+            fontSize: '1rem' 
+          }}>
+            No Image Available
+          </div>
         )}
         <div style={{ padding: '20px' }}>
           <h2 style={{ fontSize: '1.8rem', color: '#333', marginBottom: '10px' }}>{blog.title}</h2>
