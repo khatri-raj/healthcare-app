@@ -23,6 +23,7 @@ const PatientBlogDetail = () => {
           console.log('Fetched Blog:', response.data);
           console.log('Blog Image URL:', response.data.image);
           setBlog(response.data);
+
         } catch (err) {
           console.error('Fetch Error:', err.response?.data);
           setError(err.response?.data?.error || 'Failed to fetch blog');

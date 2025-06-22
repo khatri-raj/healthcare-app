@@ -6,6 +6,7 @@ import { AuthContext } from '../context/AuthContext';
 const Login = () => {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -13,23 +14,30 @@ const Login = () => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:8000/api/login/', credentials);
-      console.log('Login response:', response.data);
-      const { access, refresh, user_type, user } = response.data;
+// Login.js
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await axios.post('http://localhost:8000/api/login/', credentials);
+    console.log('Login response:', response.data);
+    const { access, refresh, user_type, user } = response.data;
 
-      // Save user details to localStorage
-      localStorage.setItem('first_name', user.first_name || '');
-      localStorage.setItem('last_name', user.last_name || '');
-      localStorage.setItem('username', user.username || '');
-      localStorage.setItem('email', user.email || '');
-      localStorage.setItem('address_line1', user.address_line1 || '');
-      localStorage.setItem('city', user.city || '');
-      localStorage.setItem('state', user.state || '');
-      localStorage.setItem('pincode', user.pincode || '');
+    // Save user details to localStorage, including profile_picture
+    localStorage.setItem('first_name', user.first_name || '');
+    localStorage.setItem('last_name', user.last_name || '');
+    localStorage.setItem('username', user.username || '');
+    localStorage.setItem('email', user.email || '');
+    localStorage.setItem('address_line1', user.address_line1 || '');
+    localStorage.setItem('city', user.city || '');
+    localStorage.setItem('state', user.state || '');
+    localStorage.setItem('pincode', user.pincode || '');
+    // Store full URL or a valid placeholder
+    localStorage.setItem('profile_picture', user.profile_picture || '/path/to/local/placeholder.jpg');
 
+    // Show success message
+    setSuccessMessage('Login successful!');
+    setTimeout(() => {
+      setSuccessMessage('');
       login(access, refresh, user_type);
       if (user_type === 'patient') {
         navigate('/patient/dashboard');
@@ -38,11 +46,12 @@ const Login = () => {
       } else {
         setError('Invalid user type');
       }
-    } catch (err) {
-      setError(err.response?.data?.error || 'Invalid credentials');
-      console.error('Login error:', err.response?.data);
-    }
-  };
+    }, 2000);
+  } catch (err) {
+    setError(err.response?.data?.error || 'Invalid credentials');
+    console.error('Login error:', err.response?.data);
+  }
+};
 
   return (
     <div style={{ 
@@ -51,8 +60,24 @@ const Login = () => {
       padding: '20px', 
       backgroundColor: '#fff', 
       borderRadius: '8px', 
-      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)' 
+      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)', 
+      position: 'relative' 
     }}>
+      {successMessage && (
+        <div style={{ 
+          position: 'absolute', 
+          top: '20px', 
+          right: '20px', 
+          backgroundColor: '#28a745', 
+          color: '#fff', 
+          padding: '10px 20px', 
+          borderRadius: '4px', 
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', 
+          zIndex: 1000 
+        }}>
+          {successMessage}
+        </div>
+      )}
       <h2 style={{ textAlign: 'center', color: '#333', marginBottom: '20px' }}>Login</h2>
       {error && (
         <p style={{ color: '#dc3545', textAlign: 'center', marginBottom: '15px' }}>{error}</p>

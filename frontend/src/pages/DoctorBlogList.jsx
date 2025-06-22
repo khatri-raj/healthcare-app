@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -9,24 +9,31 @@ const DoctorBlogList = () => {
   const { authState } = useContext(AuthContext);
   const { isAuthenticated, userType, accessToken } = authState;
   const navigate = useNavigate();
+  const renderCount = useRef(0);
+
+  const fetchBlogs = useCallback(async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/doctor/blogs/', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+      console.log('Fetched Doctor Blogs:', response.data);
+      setBlogs(response.data.blogs || []);
+    } catch (err) {
+      console.error('Fetch Error:', err.response?.data);
+      setError(err.response?.data?.error || 'Failed to fetch blogs');
+    }
+  }, [accessToken]);
 
   useEffect(() => {
+    renderCount.current += 1;
+    console.log(`DoctorBlogList rendered ${renderCount.current} times`);
+
     if (!isAuthenticated || userType !== 'doctor') {
       navigate('/login');
     } else {
-      const fetchBlogs = async () => {
-        try {
-          const response = await axios.get('http://localhost:8000/api/doctor/blogs/', {
-            headers: { Authorization: `Bearer ${accessToken}` }
-          });
-          setBlogs(response.data.blogs || []);
-        } catch (err) {
-          setError(err.response?.data?.error || 'Failed to fetch blogs');
-        }
-      };
       fetchBlogs();
     }
-  }, [isAuthenticated, userType, accessToken, navigate]);
+  }, [isAuthenticated, userType, fetchBlogs, navigate]);
 
   const handleDelete = async (blogId) => {
     if (!window.confirm('Are you sure you want to delete this blog post?')) return;
@@ -45,7 +52,7 @@ const DoctorBlogList = () => {
   }
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
+    <div className="blog-list-container" style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
       <div style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
@@ -73,7 +80,9 @@ const DoctorBlogList = () => {
               backgroundColor: '#fff', 
               padding: '15px', 
               borderRadius: '8px', 
-              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' 
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+              display: 'flex',
+              flexDirection: 'column'
             }}>
               <div style={{ 
                 display: 'flex', 
@@ -120,12 +129,38 @@ const DoctorBlogList = () => {
               <small style={{ color: '#666', display: 'block', marginTop: '5px' }}>
                 {post.category || 'N/A'} | {new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </small>
-              {post.image && (
+              {post.image ? (
                 <img 
-                  src={post.image} 
-                  alt={post.title} 
-                  style={{ maxHeight: '200px', width: '100%', objectFit: 'cover', marginTop: '10px', borderRadius: '4px' }} 
+                  src={post.image.startsWith('/media/') ? `http://localhost:8000${post.image}` : post.image}
+                  alt={post.title || 'Blog image'} 
+                  style={{ 
+                    maxHeight: '200px', 
+                    width: '100%', 
+                    objectFit: 'cover', 
+                    marginTop: '10px', 
+                    borderRadius: '4px',
+                    display: 'block'
+                  }} 
+                  onError={(e) => {
+                    console.error('Image failed to load:', post.image);
+                    e.target.src = '/assets/placeholder.jpg';
+                  }}
+                  onLoad={() => console.log('Image loaded:', post.image)}
                 />
+              ) : (
+                <div style={{ 
+                  width: '100%', 
+                  height: '200px', 
+                  backgroundColor: '#f0f0f0', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  color: '#666', 
+                  fontSize: '0.9rem',
+                  marginTop: '10px'
+                }}>
+                  No Image Available
+                </div>
               )}
               <p style={{ marginTop: '10px', color: '#333' }}>{post.summary || 'No summary available'}</p>
             </div>

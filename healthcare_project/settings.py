@@ -131,6 +131,7 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://localhost:3000", 
 ]
 
 REST_FRAMEWORK = {
@@ -148,6 +149,6 @@ SIMPLE_JWT = {
 }
 
 # settings.py
-CORS_ALLOW_ALL_ORIGINS = True  # For development only; restrict in production
+CORS_ALLOW_ALL_ORIGINS = True  # For development only; restript in production
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 CORS_ALLOW_HEADERS = ['Authorization', 'Content-Type']

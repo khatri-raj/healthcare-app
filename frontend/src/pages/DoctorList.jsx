@@ -53,27 +53,28 @@ const DoctorList = () => {
             alignItems: 'center' 
           }}>
             <img 
-              src={doctor.profile_picture || '/placeholder.jpg'} 
-              alt="Profile Picture" 
-              style={{ width: '60px', height: '60px', borderRadius: '50%', marginRight: '15px' }} 
-            />
+  src={`http://localhost:8000${doctor.profile_picture}`} 
+  alt="Profile Picture" 
+  style={{ width: '60px', height: '60px', borderRadius: '50%', marginRight: '15px' }} 
+/>
+
             <div>
               <h5 style={{ fontSize: '1.2rem', color: '#333', marginBottom: '10px' }}>
                 {doctor.first_name} {doctor.last_name}
               </h5>
               <Link
-  to={`/patient/book_appointment/${doctor.id}`}
-  state={{ doctor }} // Pass doctor data
-  style={{ 
-    padding: '8px 15px', 
-    backgroundColor: '#007bff', 
-    color: '#fff', 
-    borderRadius: '4px', 
-    textDecoration: 'none' 
-  }}
->
-  Book Appointment
-</Link>
+                to={`/patient/book_appointment/${doctor.id}`}
+                state={{ doctor }}
+                style={{ 
+                  padding: '8px 15px', 
+                  backgroundColor: '#007bff', 
+                  color: '#fff', 
+                  borderRadius: '4px', 
+                  textDecoration: 'none' 
+                }}
+              >
+                Book Appointment
+              </Link>
             </div>
           </div>
         ))}

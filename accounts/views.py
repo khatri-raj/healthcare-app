@@ -218,25 +218,34 @@ def create_google_calendar_event(appointment):
         raise Exception(f"Credentials file not found at {settings.GOOGLE_CALENDAR_CREDENTIALS_PATH}")
     except HttpError as e:
         raise Exception(f"Failed to create calendar event: {e}")
+# views.py
+from rest_framework.decorators import api_view, parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
 
-# API Views
+# In api_signup view
 @api_view(['POST'])
+@parser_classes([MultiPartParser, FormParser])
 def api_signup(request):
-    serializer = CustomUserSerializer(data=request.data)
+    print("Received data:", request.data)
+    print("Received files:", request.FILES)  # Log files
+    mutable_data = request.data.copy()
+    mutable_data['username'] = mutable_data['username'].lower()
+    serializer = CustomUserSerializer(data=mutable_data)
     if serializer.is_valid():
         user = serializer.save()
-        user.set_password(request.data['password'])
-        user.save()
-        return Response({'message': 'User created'}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'User created successfully', 'user': CustomUserSerializer(user).data}, status=status.HTTP_201_CREATED)
+    print("Serializer errors:", serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 def api_user_login(request):
     username = request.data.get('username')
     password = request.data.get('password')
-    print(f"Login attempt with username: {username}, password: {password}")  # Add logging
+    print(f"Login attempt with username: {username}, password: {password}")
     user = authenticate(request, username=username, password=password)
     if user is not None:
+        print(f"Authenticated user: {user.username}, user_type: {user.user_type}")
         from rest_framework_simplejwt.tokens import RefreshToken
         refresh = RefreshToken.for_user(user)
         user_serializer = CustomUserSerializer(user)
@@ -246,7 +255,7 @@ def api_user_login(request):
             'user_type': user.user_type,
             'user': user_serializer.data
         })
-    print("Authentication failed")  # Add logging
+    print("Authentication failed: User is None")
     return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
@@ -277,43 +286,66 @@ def api_doctor_blog_list(request):
     return Response({'blogs': serializer.data})
 
 # views.py
+from rest_framework.decorators import api_view, permission_classes, parser_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import BlogPostSerializer
+from .models import BlogPost
+from rest_framework.parsers import MultiPartParser, FormParser
+import logging
+
+logger = logging.getLogger(__name__)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
 def api_doctor_blog_create(request):
     if request.user.user_type != 'doctor':
         return Response({'error': 'Unauthorized'}, status=status.HTTP_403_FORBIDDEN)
     try:
-        print('Request Data:', request.data)  # Log incoming data
-        print('Request Files:', request.FILES)  # Log uploaded files
+        logger.info('Creating blog with data: %s, files: %s', request.data, request.FILES)
+        if 'image' in request.FILES:
+            logger.info('Image file received: %s', request.FILES['image'].name)
+        else:
+            logger.warning('No image file received')
         serializer = BlogPostSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.save(author=request.user)
-            return Response({'message': 'Blog created'}, status=status.HTTP_201_CREATED)
+            blog = serializer.save(author=request.user)
+            logger.info('Blog created successfully: %s', blog.id)
+            return Response({'message': 'Blog created', 'id': blog.id}, status=status.HTTP_201_CREATED)
+        logger.error('Serializer errors: %s', serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        logger.error(f"Error creating blog: {str(e)}")
-        return Response({'error': 'Server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-@api_view(['GET', 'PUT', 'PATCH'])
-@permission_classes([IsAuthenticated])
-def api_doctor_blog_update(request, blog_id):
-    if request.user.user_type != 'doctor':
-        return Response({'error': 'Unauthorized'}, status=status.HTTP_403_FORBIDDEN)
-    blog = get_object_or_404(BlogPost, id=blog_id, author=request.user)
-    try:
-        if request.method == 'GET':
-            serializer = BlogPostSerializer(blog)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:  # PUT or PATCH
-            serializer = BlogPostSerializer(blog, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response({'message': 'Blog updated'}, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        logger.error(f"Error processing blog {blog_id}: {str(e)}")
-        return Response({'error': 'Server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        logger.error('Error creating blog: %s', str(e))
+        return Response({'error': f'Server error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['GET', 'PATCH'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def api_doctor_blog_update(request, blog_id):
+    try:
+        blog = BlogPost.objects.get(id=blog_id, author=request.user)
+    except BlogPost.DoesNotExist:
+        return Response({'error': 'Blog not found or you are not the author'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = BlogPostSerializer(blog, context={'request': request})
+        return Response(serializer.data)
+
+    if request.method == 'PATCH':
+        logger.info('Updating blog %s with data: %s, files: %s', blog_id, request.data, request.FILES)
+        if 'image' in request.FILES:
+            logger.info('Image file received for update: %s', request.FILES['image'].name)
+        else:
+            logger.warning('No image file received for update')
+        serializer = BlogPostSerializer(blog, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            logger.info('Blog %s updated successfully', blog_id)
+            return Response({'message': 'Blog updated'}, status=status.HTTP_200_OK)
+        logger.error('Serializer errors: %s', serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def api_doctor_blog_delete(request, blog_id):

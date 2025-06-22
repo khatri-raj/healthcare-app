@@ -32,14 +32,30 @@ const DoctorDashboard = () => {
     return null;
   }
 
-  // Get user details from localStorage
+  // Get user details from localStorage with fallback
   const username = localStorage.getItem('username') || 'Doctor';
   const email = localStorage.getItem('email') || 'N/A';
   const addressLine1 = localStorage.getItem('address_line1') || 'N/A';
+  const profilePicture = localStorage.getItem('profile_picture') || '/assets/placeholder.jpg';
+  console.log('Profile Picture URL:', profilePicture); // Debug log
+
+//   const rawProfile = localStorage.getItem('profile_picture');
+// const baseURL = 'http://localhost:8000';
+// const fullProfileURL = rawProfile?.startsWith('http')
+//   ? rawProfile
+//   : rawProfile
+//     ? `${baseURL}${rawProfile.startsWith('/') ? '' : '/media/'}${rawProfile}`
+//     : '/assets/placeholder.jpg';
 
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <img 
+          src={profilePicture.startsWith('/media/') ? `http://localhost:8000${profilePicture}` : profilePicture}
+          alt="Profile Picture" 
+          style={{ width: '100px', height: '100px', borderRadius: '50%', marginBottom: '10px' }}
+          onError={(e) => console.error('Image load error:', e)}
+        />
         <h2 style={{ fontWeight: 'bold', fontSize: '1.8rem', color: '#333' }}>
           Welcome, Dr. {username}{' '}
           <span style={{ color: '#666', fontSize: '1rem' }}>(Doctor)</span>

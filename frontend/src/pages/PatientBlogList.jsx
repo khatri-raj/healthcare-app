@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -9,33 +9,34 @@ const PatientBlogList = () => {
   const { authState } = useContext(AuthContext);
   const { isAuthenticated, userType, accessToken } = authState;
   const navigate = useNavigate();
+  const renderCount = useRef(0);
+
+  const fetchBlogs = useCallback(async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/patient/blogs/', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+      console.log('Fetched Blogs:', response.data);
+      setBlogsByCategory(response.data);
+    } catch (err) {
+      console.error('Fetch Error:', err.response?.data);
+      setError(err.response?.data?.error || 'Failed to fetch blogs');
+    }
+  }, [accessToken]);
 
   useEffect(() => {
+    renderCount.current += 1;
+    console.log(`PatientBlogList rendered ${renderCount.current} times`);
+
     if (!isAuthenticated || userType !== 'patient') {
       navigate('/login');
     } else {
-      const fetchBlogs = async () => {
-        try {
-          const response = await axios.get('http://localhost:8000/api/patient/blogs/', {
-            headers: { Authorization: `Bearer ${accessToken}` }
-          });
-          console.log('Fetched Blogs:', response.data);
-          setBlogsByCategory(response.data);
-        } catch (err) {
-          console.error('Fetch Error:', err.response?.data);
-          setError(err.response?.data?.error || 'Failed to fetch blogs');
-        }
-      };
       fetchBlogs();
     }
-  }, [isAuthenticated, userType, accessToken, navigate]);
-
-  if (!isAuthenticated || userType !== 'patient') {
-    return null;
-  }
+  }, [isAuthenticated, userType, fetchBlogs, navigate]);
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+    <div className="blog-list-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
       <h2 style={{ 
         fontSize: '1.8rem', 
         color: '#333', 
@@ -54,7 +55,8 @@ const PatientBlogList = () => {
             <div style={{ 
               display: 'grid', 
               gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-              gap: '20px' 
+              gap: '20px',
+              minHeight: '200px'
             }}>
               {blogs.map((blog) => {
                 console.log('Blog Image URL:', blog.image);
@@ -63,17 +65,26 @@ const PatientBlogList = () => {
                     backgroundColor: '#fff', 
                     borderRadius: '8px', 
                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', 
-                    overflow: 'hidden' 
+                    overflow: 'hidden',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '400px'
                   }}>
                     {blog.image ? (
                       <img 
-                        src={blog.image} 
+                        src={blog.image.startsWith('/media/') ? `http://localhost:8000${blog.image}` : blog.image} 
                         alt={blog.title} 
-                        style={{ width: '100%', height: '200px', objectFit: 'cover' }} 
+                        style={{ 
+                          width: '100%', 
+                          height: '200px', 
+                          objectFit: 'cover',
+                          display: 'block'
+                        }} 
                         onError={(e) => {
                           console.error('Image failed to load:', blog.image);
-                          e.target.style.display = 'none';
+                          e.target.src = '/assets/placeholder.jpg';
                         }}
+                        onLoad={() => console.log('Image loaded:', blog.image)}
                       />
                     ) : (
                       <div style={{ 
@@ -89,7 +100,7 @@ const PatientBlogList = () => {
                         No Image Available
                       </div>
                     )}
-                    <div style={{ padding: '15px' }}>
+                    <div style={{ padding: '15px', flex: 1 }}>
                       <h5 style={{ fontSize: '1.2rem', color: '#333', marginBottom: '10px' }}>{blog.title}</h5>
                       <p style={{ color: '#666', marginBottom: '10px' }}>{blog.summary || 'No summary available'}</p>
                       <p style={{ fontSize: '0.9rem', color: '#666' }}>

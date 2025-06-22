@@ -13,8 +13,11 @@ const DoctorBlogEdit = () => {
     content: '',
     is_draft: true
   });
+  const [currentImage, setCurrentImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const { authState, refreshToken } = useContext(AuthContext);
   const { isAuthenticated, userType, accessToken } = authState;
   const navigate = useNavigate();
@@ -33,19 +36,21 @@ const DoctorBlogEdit = () => {
           console.log('Fetched Blog Data:', response.data);
           setBlogData({
             title: response.data.title || '',
-            image: null, // Image is handled separately
+            image: null,
             category: response.data.category || 'mental_health',
             summary: response.data.summary || '',
             content: response.data.content || '',
             is_draft: response.data.is_draft || false
           });
+          setCurrentImage(response.data.image || null);
+          setImagePreview(response.data.image ? (response.data.image.startsWith('/media/') ? `http://localhost:8000${response.data.image}` : response.data.image) : null);
           setLoading(false);
         } catch (err) {
           console.error('Fetch Error:', err.response?.data);
           if (err.response?.status === 401) {
             const newToken = await refreshToken();
             if (newToken) {
-              fetchBlog(newToken); // Retry with new token
+              fetchBlog(newToken);
             } else {
               navigate('/login');
             }
@@ -59,65 +64,83 @@ const DoctorBlogEdit = () => {
     }
   }, [blog_id, isAuthenticated, userType, accessToken, navigate, refreshToken]);
 
+  const createFormData = () => {
+    const formData = new FormData();
+    if (blogData.title) formData.append('title', blogData.title);
+    if (blogData.image) {
+      console.log('Appending image:', blogData.image.name, blogData.image);
+      formData.append('image', blogData.image);
+    } else {
+      console.log('No image provided');
+    }
+    if (blogData.category) formData.append('category', blogData.category);
+    if (blogData.summary) formData.append('summary', blogData.summary);
+    if (blogData.content) formData.append('content', blogData.content);
+    formData.append('is_draft', blogData.is_draft.toString());
+    for (let [key, value] of formData.entries()) {
+      console.log(`FormData ${key}: ${value instanceof File ? value.name : value}`);
+    }
+    return formData;
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    console.log('Selected Image:', file ? file.name : 'None');
+    setBlogData({ ...blogData, image: file });
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(currentImage);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isAuthenticated || userType !== 'doctor') {
       navigate('/login');
-    } else {
-      try {
-        const formData = new FormData();
-        if (blogData.title) formData.append('title', blogData.title);
-        if (blogData.image) formData.append('image', blogData.image);
-        if (blogData.category) formData.append('category', blogData.category);
-        if (blogData.summary) formData.append('summary', blogData.summary);
-        if (blogData.content) formData.append('content', blogData.content); // Fixed syntax
-        formData.append('is_draft', blogData.is_draft.toString());
-
-        // Log FormData for debugging
-        for (let [key, value] of formData.entries()) {
-          console.log(`${key}: ${value instanceof File ? value.name : value}`);
+      return;
+    }
+    setSubmitLoading(true);
+    setError(null);
+    try {
+      const formData = createFormData();
+      const response = await axios.patch(`http://localhost:8000/api/doctor/blogs/${blog_id}/`, formData, {
+        headers: { 
+          Authorization: `Bearer ${accessToken}`, 
+          'Content-Type': 'multipart/form-data' 
         }
-
-        const response = await axios.patch(`http://localhost:8000/api/doctor/blogs/${blog_id}/`, formData, {
-          headers: { 
-            Authorization: `Bearer ${accessToken}`, 
-            'Content-Type': 'multipart/form-data' 
-          }
-        });
-        console.log('Update Response:', response.data);
-        navigate('/doctor/blogs');
-      } catch (err) {
-        console.error('Update Error:', err.response?.data);
-        if (err.response?.status === 401) {
-          const newToken = await refreshToken();
-          if (newToken) {
-            try {
-              const formData = new FormData();
-              if (blogData.title) formData.append('title', blogData.title);
-              if (blogData.image) formData.append('image', blogData.image);
-              if (blogData.category) formData.append('category', blogData.category);
-              if (blogData.summary) formData.append('summary', blogData.summary);
-              if (blogData.content) formData.append('content', blogData.content);
-              formData.append('is_draft', blogData.is_draft.toString());
-              const retryResponse = await axios.patch(`http://localhost:8000/api/doctor/blogs/${blog_id}/`, formData, {
-                headers: { 
-                  Authorization: `Bearer ${newToken}`, 
-                  'Content-Type': 'multipart/form-data'
-                }
-              });
-              console.log('Retry Response:', retryResponse.data);
-              navigate('/doctor/blogs');
-            } catch (retryErr) {
-              console.error('Retry Error:', retryErr.response?.data);
-              setError(JSON.stringify(retryErr.response?.data) || 'Failed to update blog after token refresh');
-            }
-          } else {
-            navigate('/login');
+      });
+      console.log('Update Response:', response.data);
+      navigate('/doctor/blogs');
+    } catch (err) {
+      console.error('Update Error:', err.response?.data);
+      if (err.response?.status === 401) {
+        const newToken = await refreshToken();
+        if (newToken) {
+          try {
+            const formData = createFormData();
+            const retryResponse = await axios.patch(`http://localhost:8000/api/doctor/blogs/${blog_id}/`, formData, {
+              headers: { 
+                Authorization: `Bearer ${newToken}`, 
+                'Content-Type': 'multipart/form-data'
+              }
+            });
+            console.log('Retry Response:', retryResponse.data);
+            navigate('/doctor/blogs');
+          } catch (retryErr) {
+            console.error('Retry Error:', retryErr.response?.data);
+            setError(JSON.stringify(retryErr.response?.data) || 'Failed to update blog after token refresh');
           }
         } else {
-          setError(JSON.stringify(err.response?.data) || 'Failed to update blog');
+          navigate('/login');
         }
+      } else {
+        setError(JSON.stringify(err.response?.data) || 'Failed to update blog');
       }
+    } finally {
+      setSubmitLoading(false);
     }
   };
 
@@ -151,20 +174,29 @@ const DoctorBlogEdit = () => {
               border: '1px solid #ccc', 
               borderRadius: '4px' 
             }}
+            disabled={submitLoading}
           />
         </div>
         <div>
           <label htmlFor="image" style={{ display: 'block', marginBottom: '5px', color: '#333' }}>Image</label>
+          {imagePreview && (
+            <div style={{ marginBottom: '10px' }}>
+              <p style={{ color: '#333' }}>Image Preview:</p>
+              <img 
+                src={imagePreview} 
+                alt="Preview"
+                style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '4px' }}
+                onError={(e) => console.error('Preview image failed to load:', imagePreview)}
+              />
+            </div>
+          )}
           <input
             type="file"
             id="image"
             accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files[0];
-              console.log('Selected Image:', file ? file.name : 'None');
-              setBlogData({ ...blogData, image: file });
-            }}
+            onChange={handleImageChange}
             style={{ width: '100%', padding: '10px' }}
+            disabled={submitLoading}
           />
         </div>
         <div>
@@ -181,6 +213,7 @@ const DoctorBlogEdit = () => {
               border: '1px solid #ccc', 
               borderRadius: '4px' 
             }}
+            disabled={submitLoading}
           >
             <option value="mental_health">Mental Health</option>
             <option value="heart_disease">Heart Disease</option>
@@ -203,6 +236,7 @@ const DoctorBlogEdit = () => {
               borderRadius: '4px', 
               minHeight: '100px' 
             }}
+            disabled={submitLoading}
           ></textarea>
         </div>
         <div>
@@ -212,14 +246,15 @@ const DoctorBlogEdit = () => {
             value={blogData.content}
             onChange={(e) => setBlogData({ ...blogData, content: e.target.value })}
             required
-            style={{
-              width: '100%',
-              padding: '10px',
-              fontSize: '1rem',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              minHeight: '200px'
+            style={{ 
+              width: '100%', 
+              padding: '10px', 
+              fontSize: '1rem', 
+              border: '1px solid #ccc', 
+              borderRadius: '4px', 
+              minHeight: '200px' 
             }}
+            disabled={submitLoading}
           ></textarea>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -229,31 +264,34 @@ const DoctorBlogEdit = () => {
             checked={blogData.is_draft}
             onChange={(e) => setBlogData({ ...blogData, is_draft: e.target.checked })}
             style={{ width: '20px', height: '20px' }}
+            disabled={submitLoading}
           />
-          <label htmlFor="is_draft" style={{ color: 'inherit' }}>Save as Draft</label>
+          <label htmlFor="is_draft" style={{ color: '#333' }}>Save as Draft</label>
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
           <button
             type="submit"
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#28a745',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
+            style={{ 
+              padding: '10px 20px', 
+              backgroundColor: '#28a745', 
+              color: '#fff', 
+              border: 'none', 
+              borderRadius: '4px', 
+              cursor: submitLoading ? 'not-allowed' : 'pointer',
+              opacity: submitLoading ? 0.6 : 1
             }}
+            disabled={submitLoading}
           >
-            Update
+            {submitLoading ? 'Updating...' : 'Update'}
           </button>
           <Link
             to="/doctor/blogs"
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#6c757d',
-              color: '#fff',
-              borderRadius: '4px',
-              textDecoration: 'none'
+            style={{ 
+              padding: '10px 20px', 
+              backgroundColor: '#6c757d', 
+              color: '#fff', 
+              borderRadius: '4px', 
+              textDecoration: 'none' 
             }}
           >
             Cancel

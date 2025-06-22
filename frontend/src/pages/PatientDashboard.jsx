@@ -32,7 +32,7 @@ const PatientDashboard = () => {
     return null;
   }
 
-  // Get user details from localStorage
+  // Get user details from localStorage with fallback
   const firstName = localStorage.getItem('first_name') || 'Patient';
   const lastName = localStorage.getItem('last_name') || '';
   const username = localStorage.getItem('username') || 'N/A';
@@ -41,10 +41,27 @@ const PatientDashboard = () => {
   const city = localStorage.getItem('city') || 'N/A';
   const state = localStorage.getItem('state') || 'N/A';
   const pincode = localStorage.getItem('pincode') || 'N/A';
+  const profilePicture = localStorage.getItem('profile_picture') || '/assets/placeholder.jpg';
+  console.log('Profile Picture URL:', profilePicture);
+
+// const rawProfile = localStorage.getItem('profile_picture');
+// const baseURL = 'http://localhost:8000';
+// const fullProfileURL = rawProfile?.startsWith('http')
+//   ? rawProfile
+//   : rawProfile
+//     ? `${baseURL}${rawProfile.startsWith('/') ? '' : '/media/'}${rawProfile}`
+//     : '/assets/placeholder.jpg';
 
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <img 
+          // src={fullProfileURL}
+          src={profilePicture.startsWith('/media/') ? `http://localhost:8000${profilePicture}` : profilePicture}
+          alt="Profile Picture" 
+          style={{ width: '100px', height: '100px', borderRadius: '50%', marginBottom: '10px' }}
+          onError={(e) => console.error('Image load error:', e)}
+        />
         <h2 style={{ fontWeight: 'bold', fontSize: '1.8rem', color: '#333' }}>
           Welcome, {firstName} {lastName}{' '}
           <span style={{ color: '#666', fontSize: '1rem' }}>(Patient)</span>
