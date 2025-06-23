@@ -33,6 +33,15 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('userType');
+    localStorage.removeItem('first_name');
+    localStorage.removeItem('last_name');
+    localStorage.removeItem('username');
+    localStorage.removeItem('email');
+    localStorage.removeItem('address_line1');
+    localStorage.removeItem('city');
+    localStorage.removeItem('state');
+    localStorage.removeItem('pincode');
+    localStorage.removeItem('profile_picture');
     setAuthState({
       isAuthenticated: false,
       userType: null,

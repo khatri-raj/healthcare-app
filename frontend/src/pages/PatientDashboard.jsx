@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from '../context/AuthContext';
 
 const PatientDashboard = () => {
@@ -42,97 +43,136 @@ const PatientDashboard = () => {
   const state = localStorage.getItem('state') || 'N/A';
   const pincode = localStorage.getItem('pincode') || 'N/A';
   const profilePicture = localStorage.getItem('profile_picture') || '/assets/placeholder.jpg';
-  console.log('Profile Picture URL:', profilePicture);
 
-// const rawProfile = localStorage.getItem('profile_picture');
-// const baseURL = 'http://localhost:8000';
-// const fullProfileURL = rawProfile?.startsWith('http')
-//   ? rawProfile
-//   : rawProfile
-//     ? `${baseURL}${rawProfile.startsWith('/') ? '' : '/media/'}${rawProfile}`
-//     : '/assets/placeholder.jpg';
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, staggerChildren: 0.1 } },
+  };
+
+  const childVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-        <img 
-          // src={fullProfileURL}
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', fontFamily: "'Inter', sans-serif" }}
+    >
+      <motion.div variants={childVariants} style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <motion.img
           src={profilePicture.startsWith('/media/') ? `http://localhost:8000${profilePicture}` : profilePicture}
-          alt="Profile Picture" 
+          alt="Profile Picture"
           style={{ width: '100px', height: '100px', borderRadius: '50%', marginBottom: '10px' }}
-          onError={(e) => console.error('Image load error:', e)}
+          onError={(e) => { e.target.src = '/assets/placeholder.jpg'; console.error('Image load error:', e); }}
+          whileHover={{ scale: 1.05 }}
         />
-        <h2 style={{ fontWeight: 'bold', fontSize: '1.8rem', color: '#333' }}>
+        <motion.h2
+          style={{ fontWeight: '600', fontSize: '1.8rem', color: '#1e3a8a' }}
+        >
           Welcome, {firstName} {lastName}{' '}
-          <span style={{ color: '#666', fontSize: '1rem' }}>(Patient)</span>
-        </h2>
-      </div>
-      {error && (
-        <p style={{ color: '#dc3545', textAlign: 'center', marginBottom: '15px' }}>{error}</p>
-      )}
-      <div style={{ 
-        backgroundColor: '#fff', 
-        padding: '20px', 
-        borderRadius: '8px', 
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', 
-        marginBottom: '20px' 
-      }}>
-        <h5 style={{ 
-          backgroundColor: '#007bff', 
-          color: '#fff', 
-          padding: '10px', 
-          borderRadius: '4px', 
-          marginBottom: '15px' 
-        }}>
+          <span style={{ color: '#4b5563', fontSize: '1rem' }}>(Patient)</span>
+        </motion.h2>
+      </motion.div>
+      <AnimatePresence>
+        {error && (
+          <motion.p
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            style={{ color: '#ef4444', textAlign: 'center', marginBottom: '15px', fontSize: '0.875rem' }}
+          >
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
+      <motion.div
+        variants={childVariants}
+        style={{
+          backgroundColor: '#fff',
+          padding: '20px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+          marginBottom: '20px',
+        }}
+      >
+        <motion.h5
+          style={{
+            backgroundColor: '#3b82f6',
+            color: '#fff',
+            padding: '10px',
+            borderRadius: '4px',
+            marginBottom: '15px',
+            fontSize: '1.25rem',
+            fontWeight: '500',
+          }}
+        >
           Your Details
-        </h5>
+        </motion.h5>
         <ul style={{ listStyle: 'none', padding: 0 }}>
-          <li style={{ padding: '10px 0', borderBottom: '1px solid #eee' }}>
+          <motion.li variants={childVariants} style={{ padding: '10px 0', borderBottom: '1px solid #e5e7eb' }}>
             <strong>Username:</strong> {username}
-          </li>
-          <li style={{ padding: '10px 0', borderBottom: '1px solid #eee' }}>
+          </motion.li>
+          <motion.li variants={childVariants} style={{ padding: '10px 0', borderBottom: '1px solid #e5e7eb' }}>
             <strong>Email:</strong> {email}
-          </li>
-          <li style={{ padding: '10px 0' }}>
+          </motion.li>
+          <motion.li variants={childVariants} style={{ padding: '10px 0' }}>
             <strong>Address:</strong> {addressLine1}, {city}, {state} - {pincode}
-          </li>
+          </motion.li>
         </ul>
-      </div>
-      <h3 style={{ fontSize: '1.5rem', color: '#333', marginBottom: '15px' }}>Your Appointments</h3>
+      </motion.div>
+      <motion.h3 variants={childVariants} style={{ fontSize: '1.5rem', color: '#1e3a8a', marginBottom: '15px' }}>
+        Your Appointments
+      </motion.h3>
       {appointments.length > 0 ? (
-        <div style={{ 
-          backgroundColor: '#fff', 
-          padding: '20px', 
-          borderRadius: '8px', 
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' 
-        }}>
+        <motion.div
+          variants={childVariants}
+          style={{
+            backgroundColor: '#fff',
+            padding: '20px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+          }}
+        >
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ backgroundColor: '#f8f9fa', textAlign: 'left' }}>
-                <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>Doctor</th>
-                <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>Speciality</th>
-                <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>Date</th>
-                <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>Start Time</th>
-                <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>End Time</th>
+              <tr style={{ backgroundColor: '#f3f4f6', textAlign: 'left' }}>
+                <th style={{ padding: '10px', borderBottom: '1px solid #d1d5db' }}>Doctor</th>
+                <th style={{ padding: '10px', borderBottom: '1px solid #d1d5db' }}>Speciality</th>
+                <th style={{ padding: '10px', borderBottom: '1px solid #d1d5db' }}>Date</th>
+                <th style={{ padding: '10px', borderBottom: '1px solid #d1d5db' }}>Start Time</th>
+                <th style={{ padding: '10px', borderBottom: '1px solid #d1d5db' }}>End Time</th>
               </tr>
             </thead>
             <tbody>
               {appointments.map((app) => (
-                <tr key={app.id} style={{ borderBottom: '1px solid #ddd' }}>
+                <motion.tr
+                  key={app.id}
+                  variants={childVariants}
+                  style={{ borderBottom: '1px solid #d1d5db' }}
+                  whileHover={{ backgroundColor: '#f9fafb' }}
+                >
                   <td style={{ padding: '10px' }}>{app.doctor?.username || 'N/A'}</td>
                   <td style={{ padding: '10px' }}>{app.speciality || 'N/A'}</td>
                   <td style={{ padding: '10px' }}>{app.date || 'N/A'}</td>
                   <td style={{ padding: '10px' }}>{app.start_time || 'N/A'}</td>
                   <td style={{ padding: '10px' }}>{app.end_time || 'N/A'}</td>
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>
-        </div>
+        </motion.div>
       ) : (
-        <p style={{ color: '#666', textAlign: 'center' }}>No appointments scheduled.</p>
+        <motion.p
+          variants={childVariants}
+          style={{ color: '#4b5563', textAlign: 'center', fontSize: '0.875rem' }}
+        >
+          No appointments scheduled.
+        </motion.p>
       )}
-    </div>
+    </motion.div>
   );
 };
 

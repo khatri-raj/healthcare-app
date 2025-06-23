@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AuthProvider } from './context/AuthContext';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -24,32 +25,159 @@ function App() {
           display: 'flex', 
           flexDirection: 'column', 
           minHeight: '100vh', 
-          background: 'linear-gradient(135deg, #d0e7ff 0%, #f0f7ff 100%)' 
+          background: 'linear-gradient(135deg, #e0f2fe 0%, #f5faff 100%)',
+          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
         }}>
           <Navbar />
-          <div style={{ flex: 1, padding: '20px' }}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/patient/dashboard" element={<PatientDashboard />} />
-              <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
-              <Route path="/doctor/blogs" element={<DoctorBlogList />} />
-              <Route path="/doctor/blogs/create" element={<DoctorBlogCreate />} />
-              <Route path="/doctor/blogs/edit/:blog_id" element={<DoctorBlogEdit />} />
-              <Route path="/patient/blogs" element={<PatientBlogList />} />
-              <Route path="/patient/blogs/:blog_id" element={<PatientBlogDetail />} />
-              <Route path="/patient/doctors" element={<DoctorList />} />
-              <Route path="/patient/book_appointment/:doctor_id" element={<BookAppointment />} />
-              <Route path="/patient/appointment_confirmed/:appointment_id" element={<AppointmentConfirmed />} />
-            </Routes>
-          </div>
+          <main style={{ 
+            flex: 1, 
+            padding: '40px 20px', 
+            maxWidth: '1400px', 
+            margin: '0 auto', 
+            width: '100%' 
+          }}>
+            <AnimatePresence mode="wait">
+              <Routes>
+                <Route path="/" element={
+                  <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  >
+                    <Home />
+                  </motion.div>
+                } />
+                <Route path="/signup" element={
+                  <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  >
+                    <Signup />
+                  </motion.div>
+                } />
+                <Route path="/login" element={
+                  <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  >
+                    <Login />
+                  </motion.div>
+                } />
+                <Route path="/patient/dashboard" element={
+                  <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  >
+                    <PatientDashboard />
+                  </motion.div>
+                } />
+                <Route path="/doctor/dashboard" element={
+                  <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  >
+                    <DoctorDashboard />
+                  </motion.div>
+                } />
+                <Route path="/doctor/blogs" element={
+                  <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  >
+                    <DoctorBlogList />
+                  </motion.div>
+                } />
+                <Route path="/doctor/blogs/create" element={
+                  <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  >
+                    <DoctorBlogCreate />
+                  </motion.div>
+                } />
+                <Route path="/doctor/blogs/edit/:blog_id" element={
+                  <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  >
+                    <DoctorBlogEdit />
+                  </motion.div>
+                } />
+                <Route path="/patient/blogs" element={
+                  <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  >
+                    <PatientBlogList />
+                  </motion.div>
+                } />
+                <Route path="/patient/blogs/:blog_id" element={
+                  <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  >
+                    <PatientBlogDetail />
+                  </motion.div>
+                } />
+                <Route path="/patient/doctors" element={
+                  <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  >
+                    <DoctorList />
+                  </motion.div>
+                } />
+                <Route path="/patient/book_appointment/:doctor_id" element={
+                  <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  >
+                    <BookAppointment />
+                  </motion.div>
+                } />
+                <Route path="/patient/appointment_confirmed/:appointment_id" element={
+                  <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  >
+                    <AppointmentConfirmed />
+                  </motion.div>
+                } />
+              </Routes>
+            </AnimatePresence>
+          </main>
           <footer style={{ 
-            backgroundColor: '#f8f9fa', 
-            padding: '15px 0', 
+            backgroundColor: '#1e3a8a', 
+            color: '#fff', 
+            padding: '20px', 
             textAlign: 'center', 
-            color: '#555', 
-            fontSize: '0.9rem' 
+            fontSize: '0.875rem',
+            boxShadow: '0 -2px 4px rgba(0, 0, 0, 0.1)',
           }}>
             © 2025 Healthcare App. All rights reserved.
           </footer>

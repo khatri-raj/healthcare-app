@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from '../context/AuthContext';
 
 const BookAppointment = () => {
@@ -19,7 +20,6 @@ const BookAppointment = () => {
     } else if (!doctor) {
       const fetchDoctor = async () => {
         try {
-          console.log(`Fetching doctor with ID: ${doctor_id}`);
           const response = await axios.get(`http://localhost:8000/api/patient/doctors/${doctor_id}/`, {
             headers: { Authorization: `Bearer ${accessToken}` }
           });
@@ -57,7 +57,6 @@ const BookAppointment = () => {
         start_time: startTime,
         end_time: endTime,
       };
-      console.log('Sending appointment data:', normalizedFormData);
       try {
         const response = await axios.post(
           `http://localhost:8000/api/patient/book_appointment/${doctor_id}/`,
@@ -80,96 +79,145 @@ const BookAppointment = () => {
     return null;
   }
 
-  if (!doctor) return <div style={{ textAlign: 'center', padding: '20px' }}>{error || 'Loading...'}</div>;
+  if (!doctor) return <motion.div style={{ textAlign: 'center', padding: '20px', fontFamily: "'Inter', sans-serif" }}>{error || 'Loading...'}</motion.div>;
+
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, staggerChildren: 0.1 } },
+  };
+
+  const childVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
-      <h2 style={{ fontSize: '1.8rem', color: '#333', marginBottom: '20px' }}>
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: "'Inter', sans-serif" }}
+    >
+      <motion.h2
+        variants={childVariants}
+        style={{ fontSize: '1.8rem', color: '#1e3a8a', marginBottom: '20px', fontWeight: '600' }}
+      >
         Book Appointment with Dr. {doctor.first_name} {doctor.last_name}
-      </h2>
-      {error && (
-        <p style={{ color: '#dc3545', textAlign: 'center', marginBottom: '15px' }}>{error}</p>
-      )}
-      <div style={{ 
-        backgroundColor: '#fff', 
-        padding: '20px', 
-        borderRadius: '8px', 
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' 
-      }}>
+      </motion.h2>
+      <AnimatePresence>
+        {error && (
+          <motion.p
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            style={{ color: '#ef4444', textAlign: 'center', marginBottom: '15px', fontSize: '0.875rem' }}
+          >
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
+      <motion.div
+        variants={childVariants}
+        style={{
+          backgroundColor: '#fff',
+          padding: '20px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+        }}
+      >
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          <div>
-            <label htmlFor="speciality" style={{ display: 'block', marginBottom: '5px', color: '#333' }}>Speciality</label>
-            <input
+          <motion.div variants={childVariants}>
+            <label htmlFor="speciality" style={{ display: 'block', marginBottom: '5px', color: '#4b5563', fontSize: '0.875rem' }}>
+              Speciality
+            </label>
+            <motion.input
               type="text"
               id="speciality"
               value={formData.speciality}
               onChange={(e) => setFormData({ ...formData, speciality: e.target.value })}
               required
-              style={{ 
-                width: '100%', 
-                padding: '10px', 
-                fontSize: '1rem', 
-                border: '1px solid #ccc', 
-                borderRadius: '4px' 
+              style={{
+                width: '100%',
+                padding: '10px',
+                fontSize: '1rem',
+                border: '1px solid #d1d5db',
+                borderRadius: '4px',
+                backgroundColor: 'rgba(0,0,0,0.05)',
+                outline: 'none',
+                transition: 'border-color 0.2s',
               }}
+              whileFocus={{ scale: 1.02, boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.3)' }}
             />
-          </div>
-          <div>
-            <label htmlFor="date" style={{ display: 'block', marginBottom: '5px', color: '#333' }}>Date</label>
-            <input
+          </motion.div>
+          <motion.div variants={childVariants}>
+            <label htmlFor="date" style={{ display: 'block', marginBottom: '5px', color: '#4b5563', fontSize: '0.875rem' }}>
+              Date
+            </label>
+            <motion.input
               type="date"
               id="date"
               value={formData.date}
-              onChange={(e) => {
-                console.log('Date input:', e.target.value);
-                setFormData({ ...formData, date: e.target.value });
-              }}
+              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
               required
-              style={{ 
-                width: '100%', 
-                padding: '10px', 
-                fontSize: '1rem', 
-                border: '1px solid #ccc', 
-                borderRadius: '4px' 
+              style={{
+                width: '100%',
+                padding: '10px',
+                fontSize: '1rem',
+                border: '1px solid #d1d5db',
+                borderRadius: '4px',
+                backgroundColor: 'rgba(0,0,0,0.05)',
+                outline: 'none',
+                transition: 'border-color 0.2s',
               }}
+              whileFocus={{ scale: 1.02, boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.3)' }}
             />
-          </div>
-          <div>
-            <label htmlFor="start_time" style={{ display: 'block', marginBottom: '5px', color: '#333' }}>Start Time</label>
-            <input
+          </motion.div>
+          <motion.div variants={childVariants}>
+            <label htmlFor="start_time" style={{ display: 'block', marginBottom: '5px', color: '#4b5563', fontSize: '0.875rem' }}>
+              Start Time
+            </label>
+            <motion.input
               type="time"
               id="start_time"
               value={formData.start_time}
-              onChange={(e) => {
-                console.log('Time input:', e.target.value);
-                setFormData({ ...formData, start_time: e.target.value });
-              }}
+              onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
               required
-              style={{ 
-                width: '100%', 
-                padding: '10px', 
-                fontSize: '1rem', 
-                border: '1px solid #ccc', 
-                borderRadius: '4px' 
+              style={{
+                width: '100%',
+                padding: '10px',
+                fontSize: '1rem',
+                border: '1px solid #d1d5db',
+                borderRadius: '4px',
+                backgroundColor: 'rgba(0,0,0,0.05)',
+                outline: 'none',
+                transition: 'border-color 0.2s',
               }}
+              whileFocus={{ scale: 1.02, boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.3)' }}
             />
-          </div>
-          <button
+          </motion.div>
+          <motion.button
+            variants={childVariants}
+            whileHover={{ scale: 1.05, boxShadow: '0 0 10px rgba(34, 197, 94, 0.5)' }}
+            whileTap={{ scale: 0.95 }}
             type="submit"
-            style={{ 
-              padding: '10px 20px', 
-              backgroundColor: '#28a745', 
-              color: '#fff', 
-              border: 'none', 
-              borderRadius: '4px', 
-              cursor: 'pointer' 
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#22c55e',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              fontWeight: '500',
             }}
+            onMouseEnter={(e) => (e.target.style.backgroundColor = '#16a34a')}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = '#22c55e')}
           >
             Confirm
-          </button>
+          </motion.button>
         </form>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
