@@ -33,24 +33,30 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return user
 
 class BlogPostSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
     author = CustomUserSerializer(read_only=True)
     created_at = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M:%S")
 
+    image = serializers.ImageField(required=False, allow_null=True)
+
     class Meta:
         model = BlogPost
-        fields = ['id', 'title', 'image', 'category', 'summary', 'content', 'is_draft', 'author', 'created_at']
+        fields = '__all__'
         extra_kwargs = {
             'is_draft': {'required': True}
         }
 
-    def get_image(self, obj):
-        if obj.image and obj.image.url:
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.image and hasattr(instance.image, 'url'):
             request = self.context.get('request')
+            image_url = instance.image.url
             if request:
-                return request.build_absolute_uri(obj.image.url)
-            return f"http://localhost:8000{obj.image.url}"
-        return None
+                representation['image'] = request.build_absolute_uri(image_url)
+            else:
+                representation['image'] = f"http://localhost:8000{image_url}"
+        else:
+            representation['image'] = None
+        return representation
 
     def validate(self, data):
         if not data.get('title'):
@@ -60,7 +66,7 @@ class BlogPostSerializer(serializers.ModelSerializer):
         if not data.get('content'):
             raise serializers.ValidationError({'content': 'Content is required.'})
         return data
-    
+   
 class AppointmentSerializer(serializers.ModelSerializer):
     patient = CustomUserSerializer(read_only=True)
     doctor = CustomUserSerializer(read_only=True)
