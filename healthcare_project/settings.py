@@ -132,6 +132,7 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:3000", 
+    "https://healthcareapp-frontend.onrender.com"
 ]
 
 REST_FRAMEWORK = {
