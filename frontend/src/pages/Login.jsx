@@ -67,26 +67,34 @@ const Login = () => {
   };
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      minHeight: 'calc(100vh - 200px)', 
-      padding: '20px' 
-    }}>
+    <div
+      style={{
+        backgroundImage: `url("src/assets/Login.jpg")`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 0,
+        margin: 0,
+        width: '100%',
+      }}
+    >
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        style={{ 
-          maxWidth: '400px', 
-          width: '100%', 
-          backgroundColor: '#fff', 
-          borderRadius: '12px', 
-          padding: '32px', 
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)', 
-          position: 'relative', 
-          overflow: 'hidden' 
+        style={{
+          maxWidth: '400px',
+          width: '100%',
+          backgroundColor: 'rgba(255, 255, 255, 0.8)', // Increased transparency
+          borderRadius: '12px',
+          padding: '32px',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
         <AnimatePresence>

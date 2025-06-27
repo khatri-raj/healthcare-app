@@ -116,236 +116,261 @@ const DoctorBlogCreate = () => {
   };
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: "'Inter', sans-serif" }}
+    <div
+      style={{
+        backgroundImage: `url("/src/assets/doctorblogshow.jpg")`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 0,
+        margin: 0,
+        width: '100%',
+      }}
     >
-      <motion.h2
-        variants={childVariants}
-        style={{ fontSize: '1.8rem', color: '#1e3a8a', marginBottom: '20px', fontWeight: '600' }}
-      >
-        Create New Blog Post
-      </motion.h2>
-      <AnimatePresence>
-        {error && (
-          <motion.p
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            style={{ color: '#ef4444', textAlign: 'center', marginBottom: '15px', fontSize: '0.875rem' }}
-          >
-            {error}
-          </motion.p>
-        )}
-      </AnimatePresence>
-      <motion.form
-        onSubmit={handleSubmit}
-        variants={childVariants}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '15px',
-          backgroundColor: '#fff',
+          maxWidth: '600px',
+          width: '100%',
+          margin: '20px',
           padding: '20px',
+          fontFamily: "'Inter', sans-serif",
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
           borderRadius: '8px',
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
         }}
       >
-        <motion.div variants={childVariants}>
-          <label
-            htmlFor="title"
-            style={{ display: 'block', marginBottom: '5px', color: '#1e3a8a', fontWeight: '500' }}
-          >
-            Title
-          </label>
-          <input
-            type="text"
-            id="title"
-            value={blogData.title}
-            onChange={(e) => setBlogData({ ...blogData, title: e.target.value })}
-            required
-            style={{
-              width: '100%',
-              padding: '10px',
-              fontSize: '1rem',
-              border: '1px solid #d1d5db',
-              borderRadius: '4px',
-              outline: 'none',
-              transition: 'border-color 0.2s',
-            }}
-            disabled={loading}
-            onFocus={(e) => (e.target.style.borderColor = '#3b82f6')}
-            onBlur={(e) => (e.target.style.borderColor = '#d1d5db')}
-          />
-        </motion.div>
-        <motion.div variants={childVariants}>
-          <label
-            htmlFor="image"
-            style={{ display: 'block', marginBottom: '5px', color: '#1e3a8a', fontWeight: '500' }}
-          >
-            Image
-          </label>
-          {imagePreview && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              style={{ marginBottom: '10px' }}
+        <motion.h2
+          variants={childVariants}
+          style={{ fontSize: '1.8rem', color: '#1e3a8a', marginBottom: '20px', fontWeight: '600' }}
+        >
+          Create New Blog Post
+        </motion.h2>
+        <AnimatePresence>
+          {error && (
+            <motion.p
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              style={{ color: '#ef4444', textAlign: 'center', marginBottom: '15px', fontSize: '0.875rem' }}
             >
-              <p style={{ color: '#4b5563', fontSize: '0.875rem' }}>Image Preview:</p>
-              <img
-                src={imagePreview}
-                alt="Preview"
-                style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '4px' }}
-              />
-            </motion.div>
+              {error}
+            </motion.p>
           )}
-          <input
-            type="file"
-            id="image"
-            accept="image/*"
-            onChange={handleImageChange}
-            style={{ width: '100%', padding: '10px', fontSize: '0.875rem' }}
-            disabled={loading}
-          />
-        </motion.div>
-        <motion.div variants={childVariants}>
-          <label
-            htmlFor="category"
-            style={{ display: 'block', marginBottom: '5px', color: '#1e3a8a', fontWeight: '500' }}
-          >
-            Category
-          </label>
-          <select
-            id="category"
-            value={blogData.category}
-            onChange={(e) => setBlogData({ ...blogData, category: e.target.value })}
-            required
-            style={{
-              width: '100%',
-              padding: '10px',
-              fontSize: '1rem',
-              border: '1px solid #d1d5db',
-              borderRadius: '4px',
-              outline: 'none',
-              transition: 'border-color 0.2s',
-            }}
-            disabled={loading}
-            onFocus={(e) => (e.target.style.borderColor = '#3b82f6')}
-            onBlur={(e) => (e.target.style.borderColor = '#d1d5db')}
-          >
-            <option value="mental_health">Mental Health</option>
-            <option value="heart_disease">Heart Disease</option>
-            <option value="covid19">Covid19</option>
-            <option value="immunization">Immunization</option>
-          </select>
-        </motion.div>
-        <motion.div variants={childVariants}>
-          <label
-            htmlFor="summary"
-            style={{ display: 'block', marginBottom: '5px', color: '#1e3a8a', fontWeight: '500' }}
-          >
-            Summary
-          </label>
-          <textarea
-            id="summary"
-            value={blogData.summary}
-            onChange={(e) => setBlogData({ ...blogData, summary: e.target.value })}
-            required
-            style={{
-              width: '100%',
-              padding: '10px',
-              fontSize: '1rem',
-              border: '1px solid #d1d5db',
-              borderRadius: '4px',
-              minHeight: '100px',
-              outline: 'none',
-              transition: 'border-color 0.2s',
-            }}
-            disabled={loading}
-            onFocus={(e) => (e.target.style.borderColor = '#3b82f6')}
-            onBlur={(e) => (e.target.style.borderColor = '#d1d5db')}
-          ></textarea>
-        </motion.div>
-        <motion.div variants={childVariants}>
-          <label
-            htmlFor="content"
-            style={{ display: 'block', marginBottom: '5px', color: '#1e3a8a', fontWeight: '500' }}
-          >
-            Content
-          </label>
-          <textarea
-            id="content"
-            value={blogData.content}
-            onChange={(e) => setBlogData({ ...blogData, content: e.target.value })}
-            required
-            style={{
-              width: '100%',
-              padding: '10px',
-              fontSize: '1rem',
-              border: '1px solid #d1d5db',
-              borderRadius: '4px',
-              minHeight: '200px',
-              outline: 'none',
-              transition: 'border-color 0.2s',
-            }}
-            disabled={loading}
-            onFocus={(e) => (e.target.style.borderColor = '#3b82f6')}
-            onBlur={(e) => (e.target.style.borderColor = '#d1d5db')}
-          ></textarea>
-        </motion.div>
-        <motion.div variants={childVariants} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <input
-            type="checkbox"
-            id="is_draft"
-            checked={blogData.is_draft}
-            onChange={(e) => setBlogData({ ...blogData, is_draft: e.target.checked })}
-            style={{ width: '20px', height: '20px' }}
-            disabled={loading}
-          />
-          <label htmlFor="is_draft" style={{ color: '#4b5563' }}>
-            Save as Draft
-          </label>
-        </motion.div>
-        <motion.div variants={childVariants} style={{ display: 'flex', gap: '10px' }}>
-          <motion.button
-            type="submit"
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#3b82f6',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              fontSize: '1rem',
-              fontWeight: '500',
-            }}
-            disabled={loading}
-            whileHover={{ scale: loading ? 1 : 1.05, backgroundColor: loading ? '#3b82f6' : '#2563eb' }}
-          >
-            {loading ? 'Submitting...' : 'Submit'}
-          </motion.button>
-          <Link
-            to="/doctor/blogs"
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#6b7280',
-              color: '#fff',
-              borderRadius: '4px',
-              textDecoration: 'none',
-              fontSize: '1rem',
-              fontWeight: '500',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            Cancel
-          </Link>
-        </motion.div>
-      </motion.form>
-    </motion.div>
+        </AnimatePresence>
+        <motion.form
+          onSubmit={handleSubmit}
+          variants={childVariants}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '15px',
+            backgroundColor: '#fff',
+            padding: '20px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          <motion.div variants={childVariants}>
+            <label
+              htmlFor="title"
+              style={{ display: 'block', marginBottom: '5px', color: '#1e3a8a', fontWeight: '500' }}
+            >
+              Title
+            </label>
+            <input
+              type="text"
+              id="title"
+              value={blogData.title}
+              onChange={(e) => setBlogData({ ...blogData, title: e.target.value })}
+              required
+              style={{
+                width: '100%',
+                padding: '10px',
+                fontSize: '1rem',
+                border: '1px solid #d1d5db',
+                borderRadius: '4px',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+              }}
+              disabled={loading}
+              onFocus={(e) => (e.target.style.borderColor = '#3b82f6')}
+              onBlur={(e) => (e.target.style.borderColor = '#d1d5db')}
+            />
+          </motion.div>
+          <motion.div variants={childVariants}>
+            <label
+              htmlFor="image"
+              style={{ display: 'block', marginBottom: '5px', color: '#1e3a8a', fontWeight: '500' }}
+            >
+              Image
+            </label>
+            {imagePreview && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                style={{ marginBottom: '10px' }}
+              >
+                <p style={{ color: '#4b5563', fontSize: '0.875rem' }}>Image Preview:</p>
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '4px' }}
+                />
+              </motion.div>
+            )}
+            <input
+              type="file"
+              id="image"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ width: '100%', padding: '10px', fontSize: '0.875rem' }}
+              disabled={loading}
+            />
+          </motion.div>
+          <motion.div variants={childVariants}>
+            <label
+              htmlFor="category"
+              style={{ display: 'block', marginBottom: '5px', color: '#1e3a8a', fontWeight: '500' }}
+            >
+              Category
+            </label>
+            <select
+              id="category"
+              value={blogData.category}
+              onChange={(e) => setBlogData({ ...blogData, category: e.target.value })}
+              required
+              style={{
+                width: '100%',
+                padding: '10px',
+                fontSize: '1rem',
+                border: '1px solid #d1d5db',
+                borderRadius: '4px',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+              }}
+              disabled={loading}
+              onFocus={(e) => (e.target.style.borderColor = '#3b82f6')}
+              onBlur={(e) => (e.target.style.borderColor = '#d1d5db')}
+            >
+              <option value="mental_health">Mental Health</option>
+              <option value="heart_disease">Heart Disease</option>
+              <option value="covid19">Covid19</option>
+              <option value="immunization">Immunization</option>
+            </select>
+          </motion.div>
+          <motion.div variants={childVariants}>
+            <label
+              htmlFor="summary"
+              style={{ display: 'block', marginBottom: '5px', color: '#1e3a8a', fontWeight: '500' }}
+            >
+              Summary
+            </label>
+            <textarea
+              id="summary"
+              value={blogData.summary}
+              onChange={(e) => setBlogData({ ...blogData, summary: e.target.value })}
+              required
+              style={{
+                width: '100%',
+                padding: '10px',
+                fontSize: '1rem',
+                border: '1px solid #d1d5db',
+                borderRadius: '4px',
+                minHeight: '100px',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+              }}
+              disabled={loading}
+              onFocus={(e) => (e.target.style.borderColor = '#3b82f6')}
+              onBlur={(e) => (e.target.style.borderColor = '#d1d5db')}
+            ></textarea>
+          </motion.div>
+          <motion.div variants={childVariants}>
+            <label
+              htmlFor="content"
+              style={{ display: 'block', marginBottom: '5px', color: '#1e3a8a', fontWeight: '500' }}
+            >
+              Content
+            </label>
+            <textarea
+              id="content"
+              value={blogData.content}
+              onChange={(e) => setBlogData({ ...blogData, content: e.target.value })}
+              required
+              style={{
+                width: '100%',
+                padding: '10px',
+                fontSize: '1rem',
+                border: '1px solid #d1d5db',
+                borderRadius: '4px',
+                minHeight: '200px',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+              }}
+              disabled={loading}
+              onFocus={(e) => (e.target.style.borderColor = '#3b82f6')}
+              onBlur={(e) => (e.target.style.borderColor = '#d1d5db')}
+            ></textarea>
+          </motion.div>
+          <motion.div variants={childVariants} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <input
+              type="checkbox"
+              id="is_draft"
+              checked={blogData.is_draft}
+              onChange={(e) => setBlogData({ ...blogData, is_draft: e.target.checked })}
+              style={{ width: '20px', height: '20px' }}
+              disabled={loading}
+            />
+            <label htmlFor="is_draft" style={{ color: '#4b5563' }}>
+              Save as Draft
+            </label>
+          </motion.div>
+          <motion.div variants={childVariants} style={{ display: 'flex', gap: '10px' }}>
+            <motion.button
+              type="submit"
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#3b82f6',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                fontSize: '1rem',
+                fontWeight: '500',
+              }}
+              disabled={loading}
+              whileHover={{ scale: loading ? 1 : 1.05, backgroundColor: loading ? '#3b82f6' : '#2563eb' }}
+            >
+              {loading ? 'Submitting...' : 'Submit'}
+            </motion.button>
+            <Link
+              to="/doctor/blogs"
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#6b7280',
+                color: '#fff',
+                borderRadius: '4px',
+                textDecoration: 'none',
+                fontSize: '1rem',
+                fontWeight: '500',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              Cancel
+            </Link>
+          </motion.div>
+        </motion.form>
+      </motion.div>
+    </div>
   );
 };
 

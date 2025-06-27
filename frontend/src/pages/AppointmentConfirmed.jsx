@@ -13,28 +13,29 @@ const AppointmentConfirmed = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("Auth state:", authState);
     if (!isAuthenticated || userType !== 'patient') {
+      console.warn("User not authenticated or not patient.");
       navigate('/login');
-    } else {
-      const fetchAppointment = async () => {
-        try {
-          const response = await axios.get(`http://localhost:8000/api/patient/appointment_confirmed/${appointment_id}/`, {
-            headers: { Authorization: `Bearer ${accessToken}` }
-          });
-          setAppointment(response.data);
-        } catch (err) {
-          setError(err.response?.data?.error || 'Failed to fetch appointment details');
-        }
-      };
-      fetchAppointment();
+      return;
     }
+
+    const fetchAppointment = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/patient/appointment_confirmed/${appointment_id}/`,
+          { headers: { Authorization: `Bearer ${accessToken}` } }
+        );
+        console.log("Fetched appointment:", response.data);
+        setAppointment(response.data);
+      } catch (err) {
+        console.error("Fetch appointment error:", err.response?.data);
+        setError(err.response?.data?.error || 'Failed to fetch appointment details');
+      }
+    };
+
+    fetchAppointment();
   }, [appointment_id, isAuthenticated, userType, accessToken, navigate]);
-
-  if (!isAuthenticated || userType !== 'patient') {
-    return null;
-  }
-
-  if (!appointment) return <motion.div style={{ textAlign: 'center', padding: '20px', fontFamily: "'Inter', sans-serif" }}>{error || 'Loading...'}</motion.div>;
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -45,6 +46,14 @@ const AppointmentConfirmed = () => {
     hidden: { opacity: 0, y: 10 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
+
+  if (!appointment && !error) {
+    return (
+      <motion.div style={{ textAlign: 'center', padding: '20px', fontFamily: "'Inter', sans-serif" }}>
+        Loading appointment details...
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
@@ -59,6 +68,7 @@ const AppointmentConfirmed = () => {
       >
         Appointment Confirmed
       </motion.h2>
+
       <AnimatePresence>
         {error && (
           <motion.p
@@ -71,49 +81,53 @@ const AppointmentConfirmed = () => {
           </motion.p>
         )}
       </AnimatePresence>
-      <motion.div
-        variants={childVariants}
-        style={{
-          backgroundColor: '#fff',
-          padding: '20px',
-          borderRadius: '8px',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
-        }}
-      >
-        <motion.p variants={childVariants} style={{ color: '#4b5563', marginBottom: '10px', fontSize: '1rem' }}>
-          <strong>Doctor:</strong> {appointment.doctor?.first_name} {appointment.doctor?.last_name}
-        </motion.p>
-        <motion.p variants={childVariants} style={{ color: '#4b5563', marginBottom: '10px', fontSize: '1rem' }}>
-          <strong>Speciality:</strong> {appointment.speciality}
-        </motion.p>
-        <motion.p variants={childVariants} style={{ color: '#4b5563', marginBottom: '10px', fontSize: '1rem' }}>
-          <strong>Date:</strong> {appointment.date}
-        </motion.p>
-        <motion.p variants={childVariants} style={{ color: '#4b5563', marginBottom: '10px', fontSize: '1rem' }}>
-          <strong>Time:</strong> {appointment.start_time} - {appointment.end_time}
-        </motion.p>
-        <motion.button
+
+      {appointment && (
+        <motion.div
           variants={childVariants}
-          whileHover={{ scale: 1.05, boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)' }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => navigate('/patient/dashboard')}
           style={{
-            padding: '10px 20px',
-            backgroundColor: '#3b82f6',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            marginTop: '15px',
-            fontSize: '1rem',
-            fontWeight: '500',
+            backgroundColor: '#fff',
+            padding: '20px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
           }}
-          onMouseEnter={(e) => (e.target.style.backgroundColor = '#2563eb')}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = '#3b82f6')}
         >
-          Back to Dashboard
-        </motion.button>
-      </motion.div>
+          <motion.p variants={childVariants} style={{ color: '#4b5563', marginBottom: '10px', fontSize: '1rem' }}>
+            <strong>Doctor:</strong> {appointment.doctor?.first_name} {appointment.doctor?.last_name}
+          </motion.p>
+          <motion.p variants={childVariants} style={{ color: '#4b5563', marginBottom: '10px', fontSize: '1rem' }}>
+            <strong>Speciality:</strong> {appointment.speciality}
+          </motion.p>
+          <motion.p variants={childVariants} style={{ color: '#4b5563', marginBottom: '10px', fontSize: '1rem' }}>
+            <strong>Date:</strong> {appointment.date}
+          </motion.p>
+          <motion.p variants={childVariants} style={{ color: '#4b5563', marginBottom: '10px', fontSize: '1rem' }}>
+            <strong>Time:</strong> {appointment.start_time} - {appointment.end_time}
+          </motion.p>
+
+          <motion.button
+            variants={childVariants}
+            whileHover={{ scale: 1.05, boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)' }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/patient/dashboard')}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#3b82f6',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              marginTop: '15px',
+              fontSize: '1rem',
+              fontWeight: '500',
+            }}
+            onMouseEnter={(e) => (e.target.style.backgroundColor = '#2563eb')}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = '#3b82f6')}
+          >
+            Back to Dashboard
+          </motion.button>
+        </motion.div>
+      )}
     </motion.div>
   );
 };

@@ -31,10 +31,10 @@ function App() {
           <Navbar />
           <main style={{ 
             flex: 1, 
-            padding: '40px 20px', 
-            maxWidth: '1400px', 
-            margin: '0 auto', 
-            width: '100%' 
+            padding: 0, // Ensure no padding
+            margin: 0, // Ensure no margin
+            width: '100%', // Full width
+            maxWidth: 'none', 
           }}>
             <AnimatePresence mode="wait">
               <Routes>

@@ -66,13 +66,19 @@ const Signup = () => {
   };
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      minHeight: 'calc(100vh - 200px)', 
-      padding: '20px' 
-    }}>
+    <div style={{
+      backgroundImage: `url("src/assets/Register.jpg")`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      minHeight: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 0, // Remove padding
+      margin: 0, // Ensure no margin
+      width: '100%', // Ensure full width
+    }}>   
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -80,7 +86,7 @@ const Signup = () => {
         style={{ 
           maxWidth: '600px', 
           width: '100%', 
-          backgroundColor: '#fff', 
+          backgroundColor: 'rgba(255, 255, 255, 0.8)', // More transparent
           borderRadius: '12px', 
           padding: '32px', 
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)', 
