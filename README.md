@@ -1,9 +1,11 @@
 # Healthcare-app
 
 A web-based healthcare management system built with **Django** and **Bootstrap 5**. It supports role-based access for Patients and Doctors with separate dashboards, profile management, and a new integrated blog system.
-
 ---
 
+## 🌐 Live Demo
+🔗 [View Live Application](https://healthcareapp-frontend.onrender.com)
+---
 ## 🏥 Healthcare App Overview
 
 This project offers a complete healthcare platform where doctors and patients can interact seamlessly. It now includes a **blog system** allowing doctors to create health-related blog posts and patients to read them categorized by topics.
