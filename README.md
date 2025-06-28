@@ -1,6 +1,6 @@
-# Healthcare-app
+# 🏥 Healthcare App
 
-A web-based healthcare management system built with **Django** and **Bootstrap 5**. It supports role-based access for Patients and Doctors with separate dashboards, profile management, and a new integrated blog system.
+A modern web-based Healthcare Management System built with Django (Backend) and React + Vite (Frontend). It features role-based dashboards for Patients and Doctors, full user management, an integrated blog system, and appointment booking with Google Calendar API support.
 ---
 
 ## 🌐 Live Demo
@@ -8,7 +8,10 @@ A web-based healthcare management system built with **Django** and **Bootstrap 5
 ---
 ## 🏥 Healthcare App Overview
 
-This project offers a complete healthcare platform where doctors and patients can interact seamlessly. It now includes a **blog system** allowing doctors to create health-related blog posts and patients to read them categorized by topics.
+This full-stack application facilitates seamless interaction between doctors and patients. In addition to managing profiles and roles, it includes:
+- A blog platform for doctors to post informative health content
+- Patients can explore blogs by category
+- Appointment system with calendar integration
 
 ---
 ## 🚀 Features
@@ -33,59 +36,73 @@ This project offers a complete healthcare platform where doctors and patients ca
 
 ---
 
-## 🛠 Tech Stack
+| Component    | Tech Used                                         |
+| ------------ | ------------------------------------------------- |
+| Backend      | **Python 3**, **Django 5**                        |
+| Frontend     | **React.js**, **Vite.js**, **Bootstrap 5**        |
+| Database     | **MySQL**                                         |
+| Calendar API | **Google Calendar API**                           |
+| Media        | Django Media Settings (for blog & profile images) |
 
-- Backend: **Python 3**, **Django 5**
-- Frontend: **HTML**, **Bootstrap 5**, optionally any JS library/framework for blog enhancements
-- Database: **MySQL** (updated from SQLite)
-- Media: Image uploads handled with Django's media settings
+
+
+## 📅 Appointment Booking System
+
+Patients can:
+- Book appointments with doctors using a dedicated booking interface
+Doctors can:
+- View scheduled appointments using an interactive Google Calendar integration
+- Manage upcoming visits via a calendar dashboard
 
 ---
 
 ## 📂 Folder Structure
 healthcare_project/
 │
-├── accounts/          # User management (models, forms, views) + Blog models integrated here
-├── templates/         # HTML templates (includes blog-related templates)
-├── static/            # Static files (CSS, JS)
-├── media/             # Uploaded profile pictures and blog images
-├── db.sqlite3         # Default database (replace with MySQL in production)
-├── manage.py
-└── requirements.txt
+├── backend/ (Django Project)
+│   ├── accounts/       # Auth, Profile & Blog models
+│   ├── appointments/   # Appointment models & views
+│   ├── templates/      # HTML templates
+│   ├── static/         # Static files (CSS, JS)
+│   ├── media/          # Uploaded profile & blog images
+│   ├── manage.py
+│   └── requirements.txt
+│
+├── frontend/ (React + Vite)
+│   ├── src/
+│   │   ├── components/     # Reusable components
+│   │   ├── pages/          # Page components
+│   │   ├── api/            # Axios API calls
+│   │   └── App.jsx
+│   ├── public/
+│   └── vite.config.js
 
-## ⚙️ How to Run Locally
 
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/yourusername/healthcare-django-app.git
-   cd healthcare-django-app
-   
-Create a virtual environment and activate it:
-python -m venv myenv
-myenv\Scripts\activate  # Windows
+⚙️ Run Project Locally
 
-Install dependencies:
-pip install -r requirements.txt
+🖥️ Backend (Django)
+# Clone the repo
+git clone https://github.com/yourusername/healthcare-django-app.git
+cd healthcare-django-app/backend
 
-Configure MySQL database in settings.py with your credentials:
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'your_db_name',
-        'USER': 'your_db_user',
-        'PASSWORD': 'your_db_password',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
-}
+# Create and activate virtual environment
+- python -m venv env
+- source env/bin/activate  # On Windows: env\Scripts\activate
 
-Run migrations:
-python manage.py migrate
+# Install dependencies
+- pip install -r requirements.txt
 
-Start the server:
-python manage.py runserver
+# Set up MySQL in settings.py
+# Then run:
+- python manage.py migrate
+- python manage.py runserver
 
-Visit: http://127.0.0.1:8000
+🌐 Frontend (React + Vite)
+- cd ../frontend
+- npm install
+- npm run dev
+- Visit: http://localhost:5173
+
 
 📸 Screenshots
 ### 🏠 Home Page
@@ -96,9 +113,6 @@ Visit: http://127.0.0.1:8000
 
 ### 📝 Signup Page
 ![Signup Page](Screenshots/Signup.png)
-
-### 🏥 Doctor Home
-![Doctor Home Page](Screenshots/DoctorHome.png)
 
 ### 🧑‍⚕️ Doctor Dashboard
 ![Doctor Dashboard Page](Screenshots/DoctorDashboard.png)
@@ -112,9 +126,6 @@ Visit: http://127.0.0.1:8000
 ### 💼 Blog Post Administration
 ![Blog Post Administration Page](Screenshots/BlogPostAdministration.png)
 
-### 🏠 Patient Home
-![Paitent Home Page](Screenshots/PaitentHome.png)
-
 ### 🧍 Patient Dashboard
 ![Paitent Dashboard Page](Screenshots/PaitentDashboard.png)
 
@@ -123,6 +134,14 @@ Visit: http://127.0.0.1:8000
 
 ### 📘 Detailed Blog View
 ![Detailed Blog Page](Screenshots/DetailedBlog.png)
+
+### 📅 Book Appointment
+![Book Appointment Page](Screenshots/book1.png)
+![Book Appointment Page](Screenshots/book2.png)
+![Book Appointment Page](Screenshots/book3.png)
+
+### 📆 Appointment Administration
+![Appointment Administration Page](Screenshots/bookadmin.png)
 
 ### 🛠️ Users Administration
 ![Users Administration Page](Screenshots/UsersAdministration.png)
