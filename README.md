@@ -146,7 +146,7 @@ cd healthcare-django-app/backend
 ### 🛠️ Users Administration
 ![Users Administration Page](Screenshots/UsersAdministration.png)
 
-
 👨‍💻 Author
-Raj Khatri– GitHub
-rajkhatri8060@gmail.com
+Raj Khatri
+📧 rajkhatri8060@gmail.com
+🌐 GitHub: [GitHUb](https://github.com/khatri-raj)
