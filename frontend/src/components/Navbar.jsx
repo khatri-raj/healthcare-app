@@ -14,7 +14,7 @@ const Navbar = () => {
   };
 
   const linkVariants = {
-    hover: { scale: 1.1, color: '#1e3a8a', boxShadow: '0 0 8px rgba(59, 130, 246, 0.3)' },
+    hover: { scale: 1.1, color: '#e6f3fa', boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)' },
     tap: { scale: 0.95 },
   };
 
@@ -29,36 +29,39 @@ const Navbar = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       style={{ 
-        backgroundColor: '#fff', 
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', 
+        background: 'linear-gradient(90deg, #1e3a8a, #15803d)', // Blue to green gradient
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)', 
         position: 'sticky', 
         top: 0, 
         zIndex: 1000,
-        padding: '16px 0'
+        padding: '10px 0',
+        borderBottom: '2px solid #ffffff20'
       }}
     >
       <div style={{ 
         maxWidth: '1400px', 
         margin: '0 auto', 
-        padding: '0 24px', 
+        padding: '0 30px', 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center' 
       }}>
         <motion.div
-          whileHover={{ scale: 1.05, color: '#2563eb' }}
+          whileHover={{ scale: 1.05, color: '#e6f3fa' }}
           whileTap={{ scale: 0.95 }}
         >
           <Link to="/" style={{ 
-            fontSize: '1.5rem', 
-            fontWeight: '700', 
-            color: '#1e3a8a', 
-            textDecoration: 'none' 
+            fontSize: '1.8rem', 
+            fontWeight: '800', 
+            color: '#ffffff', 
+            textDecoration: 'none',
+            letterSpacing: '1px',
+            textShadow: '1px 1px 2px rgba(0, 0, 0, 0.3)'
           }}>
-            Healthcare App
+            Healthcare Hub
           </Link>
         </motion.div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <div style={{ position: 'relative' }}>
             <motion.div
               variants={linkVariants}
@@ -68,11 +71,14 @@ const Navbar = () => {
               <Link 
                 to="/" 
                 style={{
-                  fontSize: '1rem',
-                  color: '#4b5563',
+                  fontSize: '1.1rem',
+                  color: '#e6f3fa',
                   textDecoration: 'none',
-                  padding: '12px 16px',
+                  padding: '12px 20px',
                   display: 'block',
+                  borderRadius: '8px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  transition: 'background 0.3s ease'
                 }}
               >
                 Home
@@ -84,10 +90,10 @@ const Navbar = () => {
               whileHover="visible"
               style={{
                 position: 'absolute',
-                bottom: '8px',
-                left: '16px',
-                height: '2px',
-                backgroundColor: '#1e3a8a',
+                bottom: '6px',
+                left: '20px',
+                height: '3px',
+                backgroundColor: '#38bdf8', // Light blue for hover effect
               }}
             />
           </div>
@@ -104,11 +110,14 @@ const Navbar = () => {
                       <Link 
                         to="/patient/dashboard" 
                         style={{
-                          fontSize: '1rem',
-                          color: '#4b5563',
+                          fontSize: '1.1rem',
+                          color: '#e6f3fa',
                           textDecoration: 'none',
-                          padding: '12px 16px',
+                          padding: '12px 20px',
                           display: 'block',
+                          borderRadius: '8px',
+                          background: 'rgba(16, 185, 129, 0.2)', // Green tint for patient
+                          transition: 'background 0.3s ease'
                         }}
                       >
                         🏠 Dashboard
@@ -120,10 +129,10 @@ const Navbar = () => {
                       whileHover="visible"
                       style={{
                         position: 'absolute',
-                        bottom: '8px',
-                        left: '16px',
-                        height: '2px',
-                        backgroundColor: '#1e3a8a',
+                        bottom: '6px',
+                        left: '20px',
+                        height: '3px',
+                        backgroundColor: '#10b981', // Green for patient
                       }}
                     />
                   </div>
@@ -136,11 +145,14 @@ const Navbar = () => {
                       <Link 
                         to="/patient/blogs" 
                         style={{
-                          fontSize: '1rem',
-                          color: '#4b5563',
+                          fontSize: '1.1rem',
+                          color: '#e6f3fa',
                           textDecoration: 'none',
-                          padding: '12px 16px',
+                          padding: '12px 20px',
                           display: 'block',
+                          borderRadius: '8px',
+                          background: 'rgba(16, 185, 129, 0.2)', // Green tint for patient
+                          transition: 'background 0.3s ease'
                         }}
                       >
                         📰 Blogs
@@ -152,10 +164,10 @@ const Navbar = () => {
                       whileHover="visible"
                       style={{
                         position: 'absolute',
-                        bottom: '8px',
-                        left: '16px',
-                        height: '2px',
-                        backgroundColor: '#1e3a8a',
+                        bottom: '6px',
+                        left: '20px',
+                        height: '3px',
+                        backgroundColor: '#10b981', // Green for patient
                       }}
                     />
                   </div>
@@ -168,11 +180,14 @@ const Navbar = () => {
                       <Link 
                         to="/patient/doctors" 
                         style={{
-                          fontSize: '1rem',
-                          color: '#4b5563',
+                          fontSize: '1.1rem',
+                          color: '#e6f3fa',
                           textDecoration: 'none',
-                          padding: '12px 16px',
+                          padding: '12px 20px',
                           display: 'block',
+                          borderRadius: '8px',
+                          background: 'rgba(16, 185, 129, 0.2)', // Green tint for patient
+                          transition: 'background 0.3s ease'
                         }}
                       >
                         👨‍⚕️ Doctors
@@ -184,10 +199,10 @@ const Navbar = () => {
                       whileHover="visible"
                       style={{
                         position: 'absolute',
-                        bottom: '8px',
-                        left: '16px',
-                        height: '2px',
-                        backgroundColor: '#1e3a8a',
+                        bottom: '6px',
+                        left: '20px',
+                        height: '3px',
+                        backgroundColor: '#10b981', // Green for patient
                       }}
                     />
                   </div>
@@ -204,11 +219,14 @@ const Navbar = () => {
                       <Link 
                         to="/doctor/dashboard" 
                         style={{
-                          fontSize: '1rem',
-                          color: '#4b5563',
+                          fontSize: '1.1rem',
+                          color: '#e6f3fa',
                           textDecoration: 'none',
-                          padding: '12px 16px',
+                          padding: '12px 20px',
                           display: 'block',
+                          borderRadius: '8px',
+                          background: 'rgba(59, 130, 246, 0.2)', // Blue tint for doctor
+                          transition: 'background 0.3s ease'
                         }}
                       >
                         🏥 Dashboard
@@ -220,10 +238,10 @@ const Navbar = () => {
                       whileHover="visible"
                       style={{
                         position: 'absolute',
-                        bottom: '8px',
-                        left: '16px',
-                        height: '2px',
-                        backgroundColor: '#1e3a8a',
+                        bottom: '6px',
+                        left: '20px',
+                        height: '3px',
+                        backgroundColor: '#3b82f6', // Blue for doctor
                       }}
                     />
                   </div>
@@ -236,11 +254,14 @@ const Navbar = () => {
                       <Link 
                         to="/doctor/blogs/create" 
                         style={{
-                          fontSize: '1rem',
-                          color: '#4b5563',
+                          fontSize: '1.1rem',
+                          color: '#e6f3fa',
                           textDecoration: 'none',
-                          padding: '12px 16px',
+                          padding: '12px 20px',
                           display: 'block',
+                          borderRadius: '8px',
+                          background: 'rgba(59, 130, 246, 0.2)', // Blue tint for doctor
+                          transition: 'background 0.3s ease'
                         }}
                       >
                         ✏️ Create Blog
@@ -252,10 +273,10 @@ const Navbar = () => {
                       whileHover="visible"
                       style={{
                         position: 'absolute',
-                        bottom: '8px',
-                        left: '16px',
-                        height: '2px',
-                        backgroundColor: '#1e3a8a',
+                        bottom: '6px',
+                        left: '20px',
+                        height: '3px',
+                        backgroundColor: '#3b82f6', // Blue for doctor
                       }}
                     />
                   </div>
@@ -268,11 +289,14 @@ const Navbar = () => {
                       <Link 
                         to="/doctor/blogs" 
                         style={{
-                          fontSize: '1rem',
-                          color: '#4b5563',
+                          fontSize: '1.1rem',
+                          color: '#e6f3fa',
                           textDecoration: 'none',
-                          padding: '12px 16px',
+                          padding: '12px 20px',
                           display: 'block',
+                          borderRadius: '8px',
+                          background: 'rgba(59, 130, 246, 0.2)', // Blue tint for doctor
+                          transition: 'background 0.3s ease'
                         }}
                       >
                         📋 My Blogs
@@ -284,10 +308,10 @@ const Navbar = () => {
                       whileHover="visible"
                       style={{
                         position: 'absolute',
-                        bottom: '8px',
-                        left: '16px',
-                        height: '2px',
-                        backgroundColor: '#1e3a8a',
+                        bottom: '6px',
+                        left: '20px',
+                        height: '3px',
+                        backgroundColor: '#3b82f6', // Blue for doctor
                       }}
                     />
                   </div>
@@ -295,16 +319,18 @@ const Navbar = () => {
               )}
               <motion.button
                 animate={{ scale: isAuthenticated ? [1, 1.05, 1] : 1, rotate: isAuthenticated ? [0, 2, 0] : 0, transition: { repeat: isAuthenticated ? Infinity : 0, duration: 1.5 } }}
-                whileHover={{ scale: 1.1, color: '#ef4444', boxShadow: '0 0 8px rgba(239, 68, 68, 0.3)' }}
+                whileHover={{ scale: 1.1, color: '#ffffff', background: '#ef4444', boxShadow: '0 0 10px rgba(239, 68, 68, 0.5)' }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleLogout}
                 style={{ 
-                  fontSize: '1rem', 
-                  color: '#4b5563', 
-                  background: 'none', 
-                  border: 'none', 
-                  padding: '12px 16px', 
-                  cursor: 'pointer' 
+                  fontSize: '1.1rem', 
+                  color: '#e6f3fa', 
+                  background: 'rgba(239, 68, 68, 0.3)', 
+                  border: '1px solid #ef4444', 
+                  padding: '12px 20px', 
+                  cursor: 'pointer',
+                  borderRadius: '8px',
+                  transition: 'background 0.3s ease'
                 }}
               >
                 🚪 Logout
@@ -321,11 +347,14 @@ const Navbar = () => {
                   <Link 
                     to="/login" 
                     style={{
-                      fontSize: '1rem',
-                      color: '#4b5563',
+                      fontSize: '1.1rem',
+                      color: '#e6f3fa',
                       textDecoration: 'none',
-                      padding: '12px 16px',
+                      padding: '12px 20px',
                       display: 'block',
+                      borderRadius: '8px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      transition: 'background 0.3s ease'
                     }}
                   >
                     🔐 Login
@@ -337,10 +366,10 @@ const Navbar = () => {
                   whileHover="visible"
                   style={{
                     position: 'absolute',
-                    bottom: '8px',
-                    left: '16px',
-                    height: '2px',
-                    backgroundColor: '#1e3a8a',
+                    bottom: '6px',
+                    left: '20px',
+                    height: '3px',
+                    backgroundColor: '#38bdf8', // Light blue for hover
                   }}
                 />
               </div>
@@ -353,11 +382,14 @@ const Navbar = () => {
                   <Link 
                     to="/signup" 
                     style={{
-                      fontSize: '1rem',
-                      color: '#4b5563',
+                      fontSize: '1.1rem',
+                      color: '#e6f3fa',
                       textDecoration: 'none',
-                      padding: '12px 16px',
+                      padding: '12px 20px',
                       display: 'block',
+                      borderRadius: '8px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      transition: 'background 0.3s ease'
                     }}
                   >
                     📝 Signup
@@ -369,10 +401,10 @@ const Navbar = () => {
                   whileHover="visible"
                   style={{
                     position: 'absolute',
-                    bottom: '8px',
-                    left: '16px',
-                    height: '2px',
-                    backgroundColor: '#1e3a8a',
+                    bottom: '6px',
+                    left: '20px',
+                    height: '3px',
+                    backgroundColor: '#38bdf8', // Light blue for hover
                   }}
                 />
               </div>
