@@ -149,4 +149,4 @@ cd healthcare-django-app/backend
 👨‍💻 Author
 Raj Khatri
 📧 rajkhatri8060@gmail.com
-🌐 GitHub: [GitHUb](https://github.com/khatri-raj)
+🌐 GitHub: [Github](https://github.com/khatri-raj)
